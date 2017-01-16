@@ -3,7 +3,7 @@ import numpy.linalg as la
 from scipy import sparse as sp
 from scipy.sparse import linalg as spla
 from pysal.spreg.utils import spdot, spmultiply
-from family import Binomial
+from .family import Binomial
 
 def _compute_betas(y, x):
     """
