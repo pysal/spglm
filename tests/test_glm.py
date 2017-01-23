@@ -6,13 +6,15 @@ function in R and GLM function in statsmodels.
 
 __author__ = 'Taylor Oshan tayoshan@gmail.com'
 
-from pysal.contrib.glm.glm import GLM
-from pysal.contrib.glm.family import Gaussian, Poisson, Binomial, QuasiPoisson
+from glm.glm import GLM
+from glm.family import Gaussian, Poisson, Binomial, QuasiPoisson
+#import pysal_examples
 import numpy as np
 import pysal
 import unittest
 import math
 
+link = '/Users/toshan/pysal-test/pysal_examples/pysal_examples/columbus/'
 
 class TestGaussian(unittest.TestCase):
     """
@@ -20,7 +22,9 @@ class TestGaussian(unittest.TestCase):
     """
 
     def setUp(self):
-        db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+        db = pysal.open(link+'columbus.dbf','r')
+        #db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+        #db = pysal.open(pysal_examples.get_path('columbus.dbf'),'r')
         y = np.array(db.by_col("HOVAL"))
         self.y = np.reshape(y, (49,1))
         X = []
@@ -158,7 +162,9 @@ class TestGaussian(unittest.TestCase):
 class TestPoisson(unittest.TestCase):
 
     def setUp(self):
-        db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+        db = pysal.open(link+'columbus.dbf','r')
+        #db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+        #db = pysal.open(pysal_examples.get_path('columbus.dbf'),'r')
         y = np.array(db.by_col("HOVAL"))
         y = np.reshape(y, (49,1))
         self.y = np.round(y).astype(int)
