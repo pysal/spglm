@@ -6,7 +6,7 @@ import pysal.spreg.user_output as USER
 from .utils import cache_readonly
 from .base import LikelihoodModelResults
 from . import family
-from . iwls import iwls
+from . import iwls
 
 __all__ = ['GLM']
 
