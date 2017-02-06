@@ -389,7 +389,7 @@ class CachedAttribute(object):
         warnings.warn(errmsg, CacheWriteWarning)
 
 
-class cache_readonly(object):
+class _cache_readonly(object):
     """
     Decorator for CachedAttribute
     """

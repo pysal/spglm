@@ -5,8 +5,8 @@ from pysal.spreg.utils import RegressionPropsY, spdot
 import pysal.spreg.user_output as USER
 from .utils import cache_readonly
 from .base import LikelihoodModelResults
+from .iwls import iwls
 from . import family
-from . import iwls
 
 __all__ = ['GLM']
 
@@ -124,7 +124,7 @@ class GLM(RegressionPropsY):
         self.fit_params['max_iter'] = max_iter
         self.fit_params['solve']=solve
         if solve.lower() == 'iwls':
-            params, predy, w, n_iter = iwls(self.y, self.X, self.family, self.offset, 
+            params, predy, w, n_iter = iwls(self.y, self.X, self.family, self.offset,
                     self.y_fix, ini_betas, tol, max_iter)
             self.fit_params['n_iter'] = n_iter
         return GLMResults(self, params.flatten(), predy, w)
