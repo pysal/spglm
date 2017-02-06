@@ -6,12 +6,12 @@ function in R and GLM function in statsmodels.
 
 __author__ = 'Taylor Oshan tayoshan@gmail.com'
 
-from pysal.contrib.glm.glm import GLM
-from pysal.contrib.glm.family import Gaussian, Poisson, Binomial, QuasiPoisson
 import numpy as np
 import pysal
 import unittest
 import math
+from ..glm import GLM
+from ..family import Gaussian, Poisson, Binomial, QuasiPoisson
 
 
 class TestGaussian(unittest.TestCase):

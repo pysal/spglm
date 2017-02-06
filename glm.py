@@ -3,10 +3,10 @@ import numpy as np
 import numpy.linalg as la
 from pysal.spreg.utils import RegressionPropsY, spdot
 import pysal.spreg.user_output as USER
-from utils import cache_readonly
-from base import LikelihoodModelResults
-import family
-from iwls import iwls
+from .utils import cache_readonly
+from .base import LikelihoodModelResults
+from . import family
+from . iwls import iwls
 
 __all__ = ['GLM']
 
@@ -59,8 +59,10 @@ class GLM(RegressionPropsY):
 
     Examples
     --------
-    >>> from pysal.contrib.glm.glm import GLM
-    >>> db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+    >>> import pysal
+    >>> import pysal_core
+    >>> from pysal_glm.glm import GLM
+    >>> db = pysal.open(pysal_core.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
     >>> self.y = np.reshape(y, (49,1))
     >>> X = []
@@ -242,8 +244,10 @@ class GLMResults(LikelihoodModelResults):
 
     Examples
     --------
-    >>> from pysal.contrib.glm.glm import GLM, GLMResults
-    >>> db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+    >>> import pysal
+    >>> import pysal_core
+    >>> from pysal_glm.glm import GLM, GLMResults
+    >>> db = pysal.open(pysal_core.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
     >>> self.y = np.reshape(y, (49,1))
     >>> X = []
