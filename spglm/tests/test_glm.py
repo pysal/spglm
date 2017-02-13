@@ -8,6 +8,7 @@ __author__ = 'Taylor Oshan tayoshan@gmail.com'
 
 import numpy as np
 import pysal
+import libpysal
 import unittest
 import math
 from ..glm import GLM
@@ -20,7 +21,7 @@ class TestGaussian(unittest.TestCase):
     """
 
     def setUp(self):
-        db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+        db = pysal.open(libpysal.examples.get_path('columbus.dbf'),'r')
         y = np.array(db.by_col("HOVAL"))
         self.y = np.reshape(y, (49,1))
         X = []
@@ -158,7 +159,7 @@ class TestGaussian(unittest.TestCase):
 class TestPoisson(unittest.TestCase):
 
     def setUp(self):
-        db = pysal.open(pysal.examples.get_path('columbus.dbf'),'r')
+        db = pysal.open(libpysal.examples.get_path('columbus.dbf'),'r')
         y = np.array(db.by_col("HOVAL"))
         y = np.reshape(y, (49,1))
         self.y = np.round(y).astype(int)
