@@ -5,7 +5,7 @@ try:
 except ImportError:
     from distutils.command.build_py import build_py
 
-setup(name=spglm, #name of package
+setup(name='spglm', #name of package
       version='1.0.0dev',
       description='sparse generalized linear models', #short <80chr description
       url='https://github.com/pysal/spglm', #github repo
@@ -13,7 +13,7 @@ setup(name=spglm, #name of package
       maintainer_email='tayoshan@gmail.com', 
       test_suite = 'nose.collector',
       tests_require=['nose'],
-      keywords='spatial statistics'
+      keywords='spatial statistics',
       classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
@@ -30,8 +30,8 @@ setup(name=spglm, #name of package
         ],
       license='3-Clause BSD',
       packages=[],
-      install_requires=['numpy', 'scipy', 'libpysal',
+      install_requires=['numpy', 'scipy', 'libpysal'
                         # other dependencies
-                        ,],
+                        ],
       zip_safe=False,
       cmdclass = {'build.py':build_py})
