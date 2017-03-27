@@ -54,8 +54,8 @@ def iwls(y, x, family, offset, y_fix,
     if isinstance(family, Poisson):
         y_off = y/offset
         y_off = family.starting_mu(y_off)
-    	v = family.predict(y_off)
-    	mu = family.starting_mu(y)
+        v = family.predict(y_off)
+        mu = family.starting_mu(y)
     else:
         mu = family.starting_mu(y)
         v = family.predict(mu)
@@ -78,7 +78,7 @@ def iwls(y, x, family, offset, y_fix,
         mu  = family.fitted(v)
 
         if isinstance(family, Poisson):
-        	mu = mu * offset
+            mu = mu * offset
 
         diff = min(abs(n_betas-betas))
         betas = n_betas
