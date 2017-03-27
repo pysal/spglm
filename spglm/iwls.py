@@ -53,7 +53,7 @@ def iwls(y, x, family, offset, y_fix,
         y = family.link._clean(y)
     if isinstance(family, Poisson):
         y_off = y/offset
-    	y_off = family.starting_mu(y_off)
+        y_off = family.starting_mu(y_off)
     	v = family.predict(y_off)
     	mu = family.starting_mu(y)
     else:
