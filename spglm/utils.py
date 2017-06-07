@@ -14,7 +14,7 @@ def _bit_length_26(x):
 
 
 try:
-    from scipy.lib._version import NumpyVersion
+    from numpy.lib._version import NumpyVersion
 except ImportError:
     import re
     string_types = basestring 
@@ -43,7 +43,7 @@ except ImportError:
         All dev versions of the same (pre-)release compare equal.
         Examples
         --------
-        >>> from scipy.lib._version import NumpyVersion
+        >>> from numpy.lib._version import NumpyVersion
         >>> if NumpyVersion(np.__version__) < '1.7.0':
         ...     print('skip')
         skip
