@@ -1,3 +1,6 @@
+#Main GLM classes
+
+__author__ = "Taylor Oshan tayoshan@gmail.com"
 
 import numpy as np
 import numpy.linalg as la
