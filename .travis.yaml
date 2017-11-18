@@ -21,6 +21,7 @@ install:
   - conda install --yes pip
   - conda install --yes --file requirements.txt;
   - conda install --yes nose
+  - pip install libpysal
 
 script:
   - nosetests --verbose spglm;
