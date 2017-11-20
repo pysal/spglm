@@ -6,9 +6,9 @@ except ImportError:
     from distutils.command.build_py import build_py
 
 setup(name='spglm', #name of package
-    version='1.0.0',
+    version='1.0.1',
     description='sparse generalized linear models', #short <80chr description
-    url='https://github.com/pysal/spglm', #github repo
+    url='https://github.com/TaylorOshan/spglm', #github repo
     download_url='https://pypi.python.org/pypi/spglm',
     maintainer='Taylor M. Oshan', 
     maintainer_email='tayoshan@gmail.com',
