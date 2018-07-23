@@ -7,7 +7,7 @@ except ImportError:
 
 Major = 1
 Feature = 0
-Bug = 4
+Bug = 5
 version = '%d.%d.%d' % (Major, Feature, Bug)
 
 setup(name='spglm', #name of package
