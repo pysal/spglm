@@ -4,7 +4,6 @@ branches:
 only:
   - master
 python:
-  - "2.7"
   - "3.5"
   - "3.6"
 
@@ -29,6 +28,7 @@ install:
   - conda install --yes pip
   - conda install --yes --file requirements.txt;
   - pip install libpysal
+  - pip install spreg
   - pip install -r requirements_dev.txt
 
 script:

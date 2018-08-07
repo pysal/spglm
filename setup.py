@@ -5,8 +5,13 @@ try:
 except ImportError:
     from distutils.command.build_py import build_py
 
+Major = 1
+Feature = 0
+Bug = 5
+version = '%d.%d.%d' % (Major, Feature, Bug)
+
 setup(name='spglm', #name of package
-    version='1.0.1',
+    version=version,
     description='sparse generalized linear models', #short <80chr description
     url='https://github.com/TaylorOshan/spglm', #github repo
     download_url='https://pypi.python.org/pypi/spglm',
@@ -31,7 +36,7 @@ setup(name='spglm', #name of package
         ],
     license='3-Clause BSD',
     packages=['spglm'],
-    install_requires=['scipy', 'numpy', 'pysal', 'libpysal'],
+    install_requires=['scipy', 'numpy', 'libpysal'],
     zip_safe=False,
     cmdclass = {'build.py':build_py})
 

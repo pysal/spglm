@@ -154,6 +154,7 @@ class TestGaussian(unittest.TestCase):
                 38.43622447,  38.43622447,  38.43622447,  38.43622447,  38.43622447])
         self.assertAlmostEqual(results.D2, .349514377851)
         self.assertAlmostEqual(results.adj_D2, 0.32123239427957673)
+        self.assertAlmostEqual(results.tr_S, 3.0)
 
 class TestPoisson(unittest.TestCase):
 
