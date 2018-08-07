@@ -64,7 +64,7 @@ class GLM(RegressionPropsY):
     --------
     >>> import libpysal
     >>> from spglm.glm import GLM
-    >>> db = libpysal.open(libpysal.examples.get_path('columbus.dbf'),'r')
+    >>> db = libpysal.io.open(libpysal.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
     >>> self.y = np.reshape(y, (49,1))
     >>> X = []
@@ -249,7 +249,7 @@ class GLMResults(LikelihoodModelResults):
     --------
     >>> import libpysal
     >>> from spglm.glm import GLM, GLMResults
-    >>> db = libpysal.open(libpysal.examples.get_path('columbus.dbf'),'r')
+    >>> db = libpysal.io.open(libpysal.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
     >>> self.y = np.reshape(y, (49,1))
     >>> X = []
