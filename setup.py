@@ -32,7 +32,7 @@ setup(name='spglm', #name of package
         'Programming Language :: Python :: 3.5'
         'Programming Language :: Python :: 3.6'
         ],
-    license='3-Clause BSD',
+    license='2-Clause BSD',
     packages=['spglm'],
     install_requires=['scipy', 'numpy', 'libpysal'],
     zip_safe=False,
