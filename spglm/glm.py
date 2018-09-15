@@ -1,4 +1,4 @@
-#Main GLM classes
+# Main GLM classes
 
 __author__ = "Taylor Oshan tayoshan@gmail.com"
 
@@ -12,6 +12,7 @@ from .iwls import iwls
 from . import family
 
 __all__ = ['GLM']
+
 
 class GLM(RegressionPropsY):
     """
@@ -77,8 +78,9 @@ class GLM(RegressionPropsY):
     [ 46.42818268,   0.62898397, -0.48488854]
 
     """
-    def __init__(self, y, X, family=family.Gaussian(), offset=None, y_fix = None,
-            constant=True):
+
+    def __init__(self, y, X, family=family.Gaussian(), offset=None, y_fix=None,
+                 constant=True):
         """
         Initialize class
         """
@@ -92,13 +94,13 @@ class GLM(RegressionPropsY):
         self.family = family
         self.k = self.X.shape[1]
         if offset is None:
-            self.offset = np.ones(shape=(self.n,1))
+            self.offset = np.ones(shape=(self.n, 1))
         else:
             self.offset = offset * 1.0
         if y_fix is None:
-	        self.y_fix = np.zeros(shape=(self.n,1))
+            self.y_fix = np.zeros(shape=(self.n, 1))
         else:
-	        self.y_fix = y_fix
+            self.y_fix = y_fix
         self.fit_params = {}
 
     def fit(self, ini_betas=None, tol=1.0e-6, max_iter=200, solve='iwls'):
@@ -124,10 +126,10 @@ class GLM(RegressionPropsY):
         self.fit_params['ini_betas'] = ini_betas
         self.fit_params['tol'] = tol
         self.fit_params['max_iter'] = max_iter
-        self.fit_params['solve']=solve
+        self.fit_params['solve'] = solve
         if solve.lower() == 'iwls':
-            params, predy, w, n_iter = iwls(self.y, self.X, self.family, self.offset, 
-                    self.y_fix, ini_betas, tol, max_iter)
+            params, predy, w, n_iter = iwls(
+                self.y, self.X, self.family, self.offset, self.y_fix, ini_betas, tol, max_iter)
             self.fit_params['n_iter'] = n_iter
         return GLMResults(self, params.flatten(), predy, w)
 
@@ -138,6 +140,7 @@ class GLM(RegressionPropsY):
     @cache_readonly
     def df_resid(self):
         return self.n - self.df_model - 1
+
 
 class GLMResults(LikelihoodModelResults):
     """
@@ -233,7 +236,7 @@ class GLMResults(LikelihoodModelResults):
         resid_anscombe          : array
                                   Anscombe residuals; see family.py for
                                   distribution-specific Anscombe residuals.
-                                  
+
         resid_deviance          : array
                                   deviance residuals; see family.py for
                                   distribution-specific deviance residuals.
@@ -267,8 +270,9 @@ class GLMResults(LikelihoodModelResults):
     >>> results2 = GLMResults(model, params, predy, w)
     >>> results2.aic
     408.73548964604873
-   
+
     """
+
     def __init__(self, model, params, mu, w):
         self.model = model
         self.n = model.n
@@ -297,11 +301,11 @@ class GLMResults(LikelihoodModelResults):
 
     @cache_readonly
     def resid_response(self):
-        return (self.y-self.mu)
+        return (self.y - self.mu)
 
     @cache_readonly
     def resid_pearson(self):
-        return  ((self.y-self.mu) /
+        return ((self.y - self.mu) /
                 np.sqrt(self.family.variance(self.mu)))
 
     @cache_readonly
@@ -324,10 +328,15 @@ class GLMResults(LikelihoodModelResults):
 
     @cache_readonly
     def null(self):
-        y = np.reshape(self.y, (-1,1))
+        y = np.reshape(self.y, (-1, 1))
         model = self.model
         X = np.ones((len(y), 1))
-        null_mod =  GLM(y, X, family=self.family, offset=self.offset, constant=False)
+        null_mod = GLM(
+            y,
+            X,
+            family=self.family,
+            offset=self.offset,
+            constant=False)
         return null_mod.fit().mu
 
     @cache_readonly
@@ -336,8 +345,9 @@ class GLMResults(LikelihoodModelResults):
             return 1.
         else:
             return (((np.power(self.resid_response, 2) /
-                         self.family.variance(self.mu))).sum() /
-                        (self.df_resid))
+                      self.family.variance(self.mu))).sum() /
+                    (self.df_resid))
+
     @cache_readonly
     def deviance(self):
         return self.family.deviance(self.y, self.mu)
@@ -353,35 +363,36 @@ class GLMResults(LikelihoodModelResults):
     @cache_readonly
     def llf(self):
         return self.family.loglike(self.y, self.mu, scale=self.scale)
-    
+
     @cache_readonly
     def aic(self):
         if isinstance(self.family, family.QuasiPoisson):
-        	return np.nan
+            return np.nan
         else:
-            return -2 * self.llf + 2*(self.df_model+1)
+            return -2 * self.llf + 2 * (self.df_model + 1)
 
     @cache_readonly
     def bic(self):
         return (self.deviance -
                 (self.model.n - self.df_model - 1) *
                 np.log(self.model.n))
-    
+
     @cache_readonly
     def D2(self):
         return 1 - (self.deviance / self.null_deviance)
 
     @cache_readonly
     def adj_D2(self):
-        return 1.0 - (float(self.n) - 1.0)/(float(self.n) - float(self.k)) * (1.0-self.D2)
+        return 1.0 - (float(self.n) - 1.0) / \
+            (float(self.n) - float(self.k)) * (1.0 - self.D2)
 
     @cache_readonly
     def pseudoR2(self):
-        return 1 - (self.llf/self.llnull)
+        return 1 - (self.llf / self.llnull)
 
     @cache_readonly
     def adj_pseudoR2(self):
-        return 1 - ((self.llf-self.k)/self.llnull)
+        return 1 - ((self.llf - self.k) / self.llnull)
 
     @cache_readonly
     def tr_S(self):

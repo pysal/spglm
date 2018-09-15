@@ -17,7 +17,7 @@ try:
     from numpy.lib._version import NumpyVersion
 except ImportError:
     import re
-    string_types = basestring 
+    string_types = basestring
 
     class NumpyVersion():
         """Parse and compare numpy version strings.
@@ -111,7 +111,8 @@ except ImportError:
 
         def _compare(self, other):
             if not isinstance(other, (string_types, NumpyVersion)):
-                raise ValueError("Invalid object to compare with NumpyVersion.")
+                raise ValueError(
+                    "Invalid object to compare with NumpyVersion.")
 
             if isinstance(other, string_types):
                 other = NumpyVersion(other)
@@ -211,6 +212,7 @@ class ResettableCache(dict):
 
 resettable_cache = ResettableCache
 
+
 def _next_regular(target):
     """
     Find the next regular number greater than or equal to target.
@@ -257,6 +259,8 @@ def _next_regular(target):
     if p5 < match:
         match = p5
     return match
+
+
 if NumpyVersion(np.__version__) >= '1.7.1':
     np_matrix_rank = np.linalg.matrix_rank
 else:
@@ -339,9 +343,9 @@ else:
         return np.sum(S > tol)
 
 
-
 class CacheWriteWarning(UserWarning):
     pass
+
 
 class CachedAttribute(object):
 
@@ -403,6 +407,6 @@ class _cache_readonly(object):
         return CachedAttribute(func,
                                cachename=self.cachename,
                                resetlist=self.resetlist)
+
+
 cache_readonly = _cache_readonly()
-
-
