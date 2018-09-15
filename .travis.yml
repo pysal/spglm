@@ -32,7 +32,7 @@ install:
   - conda install --yes pip
   - conda install --yes --file requirements.txt;
   - pip install https://github.com/pysal/splot/archive/master.zip
-  - pip install -r requirements_dev.txt
+  - pip install -r requirements_tests.txt
   - if "$PYSAL_PYPI"; then
         echo 'testing pypi libpysal spreg' && pip install libpysal spreg;
     else
