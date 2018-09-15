@@ -7,7 +7,7 @@ from distutils.command.build_py import build_py
 with open('spglm/__init__.py', 'r') as f:
     exec(f.readline())
 
-def _get_requirements_from_files(group_files):
+def _get_requirements_from_files(groups_files):
     groups_reqlist = {}
 
     for k,v in groups_files.items():
