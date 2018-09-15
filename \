@@ -65,18 +65,17 @@ class GLM(RegressionPropsY):
     --------
     >>> import libpysal
     >>> from spglm.glm import GLM
-    >>> from spglm.family import Gaussian
     >>> db = libpysal.io.open(libpysal.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
-    >>> y = np.reshape(y, (49,1))
+    >>> self.y = np.reshape(y, (49,1))
     >>> X = []
     >>> X.append(db.by_col("INC"))
     >>> X.append(db.by_col("CRIME"))
-    >>> X = np.array(X).T
-    >>> model = GLM(y, X, family=Gaussian())
+    >>> self.X = np.array(X).T
+    >>> model = GLM(self.y, self.X, family=Gaussian())
     >>> results = model.fit()
     >>> results.params
-    array([46.42818268,  0.62898397, -0.48488854])
+    [ 46.42818268,   0.62898397, -0.48488854]
 
     """
 
@@ -253,21 +252,20 @@ class GLMResults(LikelihoodModelResults):
     --------
     >>> import libpysal
     >>> from spglm.glm import GLM, GLMResults
-    >>> from spglm.family import Gaussian
-    >>> db = libpysal.io.open(libpysal.examples.get_path('columbus.dbf'),'r')
+    >>> db = libpysal.open(libpysal.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
     >>> y = np.reshape(y, (49,1))
     >>> X = []
     >>> X.append(db.by_col("INC"))
     >>> X.append(db.by_col("CRIME"))
     >>> X = np.array(X).T
-    >>> model = GLM(y, X, family=Gaussian())
+    >>> model = GLM(self.y, X, family=Gaussian())
     >>> results1 = model.fit()
     >>> results1.aic
     408.73548964604873
     >>> model = results1.model
     >>> params = results1.params.flatten()
-    >>> predy = results1.mu
+    >>> predy = results1.predy
     >>> w = results1.w
     >>> results2 = GLMResults(model, params, predy, w)
     >>> results2.aic

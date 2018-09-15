@@ -1,0 +1,13 @@
+scipy>=0.11
+numpy>=1.3
+
+[docs]
+
+[tests]
+nose
+nose-progressive
+nose-exclude
+coverage
+sphinx>=1.4.3
+sphinxcontrib-napoleon
+coveralls

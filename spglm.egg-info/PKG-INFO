@@ -1,0 +1,21 @@
+Metadata-Version: 1.1
+Name: spglm
+Version: 1.0.5
+Summary: sparse generalized linear models
+Home-page: https://github.com/pysal/spglm
+Author: Taylor M. Oshan
+Author-email: tayoshan@gmail.com
+License: 3-Clause BSD
+Download-URL: https://pypi.python.org/pypi/spglm
+Description: UNKNOWN
+Keywords: spatial statistics
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Education
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: GIS
+Classifier: License :: OSI Approved :: BSD License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.5Programming Language :: Python :: 3.6
