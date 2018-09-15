@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>spglm.glm &mdash; spglm v1.0.5 Manual</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pysal-styles.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="shortcut icon" href="../../_static/pysal_favicon.ico"/>
+    <link rel="top" title="spglm v1.0.5 Manual" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          spglm</a>
+        <span class="navbar-text navbar-version pull-left"><b>1.0.5</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="../../installation.html">Installation</a></li>
+                <li><a href="../../api.html">API</a></li>
+                <li><a href="../../references.html">References</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#glm">GLM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 content">
+      
+  <h1>Source code for spglm.glm</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Main GLM classes</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Taylor Oshan tayoshan@gmail.com&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="kn">as</span> <span class="nn">la</span>
+<span class="kn">from</span> <span class="nn">spreg.utils</span> <span class="kn">import</span> <span class="n">RegressionPropsY</span><span class="p">,</span> <span class="n">spdot</span>
+<span class="kn">from</span> <span class="nn">spreg</span> <span class="kn">import</span> <span class="n">user_output</span> <span class="k">as</span> <span class="n">USER</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">cache_readonly</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">LikelihoodModelResults</span>
+<span class="kn">from</span> <span class="nn">.iwls</span> <span class="kn">import</span> <span class="n">iwls</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">family</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;GLM&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="GLM"><a class="viewcode-back" href="../../generated/spglm.glm.GLM.html#spglm.glm.GLM">[docs]</a><span class="k">class</span> <span class="nc">GLM</span><span class="p">(</span><span class="n">RegressionPropsY</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generalised linear models. Can currently estimate Guassian, Poisson and</span>
+<span class="sd">    Logisitc regression coefficients. GLM object prepares model input and fit</span>
+<span class="sd">    method performs estimation which then returns a GLMResults object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        y             : array</span>
+<span class="sd">                        n*1, dependent variable.</span>
+<span class="sd">        X             : array</span>
+<span class="sd">                        n*k, independent variable, exlcuding the constant.</span>
+<span class="sd">        family        : string</span>
+<span class="sd">                        Model type: &#39;Gaussian&#39;, &#39;Poisson&#39;, &#39;Binomial&#39;</span>
+<span class="sd">        offset        : array</span>
+<span class="sd">                        n*1, the offset variable at the ith location. For Poisson model</span>
+<span class="sd">                        this term is often the size of the population at risk or</span>
+<span class="sd">                        the expected size of the outcome in spatial epidemiology.</span>
+<span class="sd">                        Default is None where Ni becomes 1.0 for all locations.</span>
+<span class="sd">        y_fix         : array</span>
+<span class="sd">                        n*1, the fix intercept value of y</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">        y             : array</span>
+<span class="sd">                        n*1, dependent variable.</span>
+<span class="sd">        X             : array</span>
+<span class="sd">                        n*k, independent variable, including constant.</span>
+<span class="sd">        family        : string</span>
+<span class="sd">                        Model type: &#39;Gaussian&#39;, &#39;Poisson&#39;, &#39;logistic&#39;</span>
+<span class="sd">        n             : integer</span>
+<span class="sd">                        Number of observations</span>
+<span class="sd">        k             : integer</span>
+<span class="sd">                        Number of independent variables</span>
+<span class="sd">        df_model      : float</span>
+<span class="sd">                        k-1, where k is the number of variables (including</span>
+<span class="sd">                        intercept)</span>
+<span class="sd">        df_residual   : float</span>
+<span class="sd">                        observations minus variables (n-k)</span>
+<span class="sd">        mean_y        : float</span>
+<span class="sd">                        Mean of y</span>
+<span class="sd">        std_y         : float</span>
+<span class="sd">                        Standard deviation of y</span>
+<span class="sd">        fit_params     : dict</span>
+<span class="sd">                        Parameters passed into fit method to define estimation</span>
+<span class="sd">                        routine.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import libpysal</span>
+<span class="sd">    &gt;&gt;&gt; from spglm.glm import GLM</span>
+<span class="sd">    &gt;&gt;&gt; from spglm.family import Gaussian</span>
+<span class="sd">    &gt;&gt;&gt; db = libpysal.io.open(libpysal.examples.get_path(&#39;columbus.dbf&#39;),&#39;r&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; y = np.array(db.by_col(&quot;HOVAL&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; y = np.reshape(y, (49,1))</span>
+<span class="sd">    &gt;&gt;&gt; X = []</span>
+<span class="sd">    &gt;&gt;&gt; X.append(db.by_col(&quot;INC&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; X.append(db.by_col(&quot;CRIME&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; X = np.array(X).T</span>
+<span class="sd">    &gt;&gt;&gt; model = GLM(y, X, family=Gaussian())</span>
+<span class="sd">    &gt;&gt;&gt; results = model.fit()</span>
+<span class="sd">    &gt;&gt;&gt; results.params</span>
+<span class="sd">    array([46.42818268,  0.62898397, -0.48488854])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GLM.__init__"><a class="viewcode-back" href="../../generated/spglm.glm.GLM.html#spglm.glm.GLM.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(),</span> <span class="n">offset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">y_fix</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">constant</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">USER</span><span class="o">.</span><span class="n">check_arrays</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="n">USER</span><span class="o">.</span><span class="n">check_y</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">if</span> <span class="n">constant</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">USER</span><span class="o">.</span><span class="n">check_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">family</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">*</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">y_fix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_fix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_fix</span> <span class="o">=</span> <span class="n">y_fix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ini_betas</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1.0e-6</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">solve</span><span class="o">=</span><span class="s1">&#39;iwls&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method that fits a model with a particular estimation routine.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        ini_betas     : array</span>
+<span class="sd">                        k*1, initial coefficient values, including constant.</span>
+<span class="sd">                        Default is None, which calculates initial values during</span>
+<span class="sd">                        estimation.</span>
+<span class="sd">        tol:            float</span>
+<span class="sd">                        Tolerence for estimation convergence.</span>
+<span class="sd">        max_iter       : integer</span>
+<span class="sd">                        Maximum number of iterations if convergence not</span>
+<span class="sd">                        achieved.</span>
+<span class="sd">        solve         :string</span>
+<span class="sd">                       Technique to solve MLE equations.</span>
+<span class="sd">                       &#39;iwls&#39; = iteratively (re)weighted least squares (default)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span><span class="p">[</span><span class="s1">&#39;ini_betas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ini_betas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span><span class="p">[</span><span class="s1">&#39;tol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span><span class="p">[</span><span class="s1">&#39;max_iter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_iter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span><span class="p">[</span><span class="s1">&#39;solve&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">solve</span>
+        <span class="k">if</span> <span class="n">solve</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;iwls&#39;</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">predy</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="n">iwls</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_fix</span><span class="p">,</span> <span class="n">ini_betas</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span><span class="p">[</span><span class="s1">&#39;n_iter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_iter</span>
+        <span class="k">return</span> <span class="n">GLMResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">predy</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">df_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">df_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_model</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+
+<span class="k">class</span> <span class="nc">GLMResults</span><span class="p">(</span><span class="n">LikelihoodModelResults</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Results of estimated GLM and diagnostics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        model         : GLM object</span>
+<span class="sd">                        Pointer to GLM object with estimation parameters.</span>
+<span class="sd">        params         : array</span>
+<span class="sd">                        k*1, estimared coefficients</span>
+<span class="sd">        mu         : array</span>
+<span class="sd">                        n*1, predicted y values.</span>
+<span class="sd">        w             : array</span>
+<span class="sd">                        n*1, final weight used for iwls</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">        model         : GLM Object</span>
+<span class="sd">                        Points to GLM object for which parameters have been</span>
+<span class="sd">                        estimated.</span>
+<span class="sd">        y             : array</span>
+<span class="sd">                        n*1, dependent variable.</span>
+<span class="sd">        x             : array</span>
+<span class="sd">                        n*k, independent variable, including constant.</span>
+<span class="sd">        family        : string</span>
+<span class="sd">                        Model type: &#39;Gaussian&#39;, &#39;Poisson&#39;, &#39;Logistic&#39;</span>
+<span class="sd">        n             : integer</span>
+<span class="sd">                        Number of observations</span>
+<span class="sd">        k             : integer</span>
+<span class="sd">                        Number of independent variables</span>
+<span class="sd">        df_model      : float</span>
+<span class="sd">                        k-1, where k is the number of variables (including</span>
+<span class="sd">                        intercept)</span>
+<span class="sd">        df_residual   : float</span>
+<span class="sd">                        observations minus variables (n-k)</span>
+<span class="sd">        fit_params    : dict</span>
+<span class="sd">                        parameters passed into fit method to define estimation</span>
+<span class="sd">                        routine.</span>
+<span class="sd">        scale         : float</span>
+<span class="sd">                        sigma squared used for subsequent computations.</span>
+<span class="sd">        params         : array</span>
+<span class="sd">                        n*k, estimared beta coefficients</span>
+<span class="sd">        w             : array</span>
+<span class="sd">                        n*1, final weight values of x</span>
+<span class="sd">        mu            : array</span>
+<span class="sd">                        n*1, predicted value of y (i.e., fittedvalues)</span>
+<span class="sd">        cov_params    : array</span>
+<span class="sd">                        Variance covariance matrix (kxk) of betas</span>
+<span class="sd">        bse           : array</span>
+<span class="sd">                        k*1, standard errors of betas</span>
+<span class="sd">        pvalues       : array</span>
+<span class="sd">                        k*1, two-tailed pvalues of parameters</span>
+<span class="sd">        tvalues       : array</span>
+<span class="sd">                        k*1, the tvalues of the standard errors</span>
+<span class="sd">        null          : array</span>
+<span class="sd">                        n*1, predicted values of y for null model</span>
+<span class="sd">        deviance      : float</span>
+<span class="sd">                        value of the deviance function evalued at params;</span>
+<span class="sd">                        see family.py for distribution-specific deviance</span>
+<span class="sd">        null_deviance : float</span>
+<span class="sd">                        value of the deviance function for the model fit with</span>
+<span class="sd">                        a constant as the only regressor</span>
+<span class="sd">        llf           : float</span>
+<span class="sd">                        value of the loglikelihood function evalued at params;</span>
+<span class="sd">                        see family.py for distribution-specific loglikelihoods</span>
+<span class="sd">        llnull        : float</span>
+<span class="sd">                        value of log-likelihood function evaluated at null</span>
+<span class="sd">        aic           : float</span>
+<span class="sd">                        AIC</span>
+<span class="sd">        bic           : float</span>
+<span class="sd">                        BIC</span>
+<span class="sd">        D2            : float</span>
+<span class="sd">                        percent deviance explained</span>
+<span class="sd">        adj_D2        : float</span>
+<span class="sd">                        adjusted percent deviance explained</span>
+<span class="sd">        pseudo_R2     : float</span>
+<span class="sd">                        McFadden&#39;s pseudo R2  (coefficient of determination)</span>
+<span class="sd">        adj_pseudoR2  : float</span>
+<span class="sd">                        adjusted McFadden&#39;s pseudo R2</span>
+<span class="sd">        tr_S          : trace of the hat matrix S</span>
+<span class="sd">        resid_response          : array</span>
+<span class="sd">                                  response residuals; defined as y-mu</span>
+<span class="sd">        resid_pearson           : array</span>
+<span class="sd">                                  Pearson residuals; defined as (y-mu)/sqrt(VAR(mu))</span>
+<span class="sd">                                  where VAR is the distribution specific variance</span>
+<span class="sd">                                  function; see family.py and varfuncs.py for more information.</span>
+<span class="sd">        resid_working           : array</span>
+<span class="sd">                                  Working residuals; the working residuals are defined as</span>
+<span class="sd">                                  resid_response/link&#39;(mu); see links.py for the</span>
+<span class="sd">                                  derivatives of the link functions.</span>
+
+<span class="sd">        resid_anscombe          : array</span>
+<span class="sd">                                  Anscombe residuals; see family.py for</span>
+<span class="sd">                                  distribution-specific Anscombe residuals.</span>
+
+<span class="sd">        resid_deviance          : array</span>
+<span class="sd">                                  deviance residuals; see family.py for</span>
+<span class="sd">                                  distribution-specific deviance residuals.</span>
+
+<span class="sd">        pearson_chi2            : float</span>
+<span class="sd">                                  chi-Squared statistic is defined as the sum</span>
+<span class="sd">                                  of the squares of the Pearson residuals</span>
+
+<span class="sd">        normalized_cov_params   : array</span>
+<span class="sd">                                k*k, approximates [X.T*X]-1</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import libpysal</span>
+<span class="sd">    &gt;&gt;&gt; from spglm.glm import GLM, GLMResults</span>
+<span class="sd">    &gt;&gt;&gt; from spglm.family import Gaussian</span>
+<span class="sd">    &gt;&gt;&gt; db = libpysal.io.open(libpysal.examples.get_path(&#39;columbus.dbf&#39;),&#39;r&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; y = np.array(db.by_col(&quot;HOVAL&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; y = np.reshape(y, (49,1))</span>
+<span class="sd">    &gt;&gt;&gt; X = []</span>
+<span class="sd">    &gt;&gt;&gt; X.append(db.by_col(&quot;INC&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; X.append(db.by_col(&quot;CRIME&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; X = np.array(X).T</span>
+<span class="sd">    &gt;&gt;&gt; model = GLM(y, X, family=Gaussian())</span>
+<span class="sd">    &gt;&gt;&gt; results1 = model.fit()</span>
+<span class="sd">    &gt;&gt;&gt; results1.aic</span>
+<span class="sd">    408.73548964604873</span>
+<span class="sd">    &gt;&gt;&gt; model = results1.model</span>
+<span class="sd">    &gt;&gt;&gt; params = results1.params.flatten()</span>
+<span class="sd">    &gt;&gt;&gt; predy = results1.mu</span>
+<span class="sd">    &gt;&gt;&gt; w = results1.w</span>
+<span class="sd">    &gt;&gt;&gt; results2 = GLMResults(model, params, predy, w)</span>
+<span class="sd">    &gt;&gt;&gt; results2.aic</span>
+<span class="sd">    408.73548964604873</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">k</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">family</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit_params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">df_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">df_model</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">df_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">df_resid</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">normalized_cov_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">la</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">spdot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">))</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">resid_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">resid_pearson</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">/</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)))</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">resid_working</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resid_response</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">deriv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">))</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">resid_anscombe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">resid_anscombe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">))</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">resid_deviance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">resid_dev</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">))</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">pearson_chi2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">chisq</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+        <span class="n">chisqsum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">chisq</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">chisqsum</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">null</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">null_mod</span> <span class="o">=</span> <span class="n">GLM</span><span class="p">(</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">X</span><span class="p">,</span>
+            <span class="n">family</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">,</span>
+            <span class="n">offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span>
+            <span class="n">constant</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">null_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span><span class="o">.</span><span class="n">mu</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">,</span> <span class="p">(</span><span class="n">family</span><span class="o">.</span><span class="n">Binomial</span><span class="p">,</span> <span class="n">family</span><span class="o">.</span><span class="n">Poisson</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="mf">1.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(((</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resid_response</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span>
+                      <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_resid</span><span class="p">))</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">deviance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">deviance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">null_deviance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">deviance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">null</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">llnull</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">loglike</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">null</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">llf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">loglike</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">aic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">,</span> <span class="n">family</span><span class="o">.</span><span class="n">QuasiPoisson</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">llf</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_model</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">bic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deviance</span> <span class="o">-</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_model</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">D2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deviance</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">null_deviance</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">adj_D2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> \
+            <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">D2</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">pseudoR2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">llf</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">llnull</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">adj_pseudoR2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">llf</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">llnull</span><span class="p">)</span>
+
+    <span class="nd">@cache_readonly</span>
+    <span class="k">def</span> <span class="nf">tr_S</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">xtx_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">))</span>
+        <span class="n">xtx_inv_xt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xtx_inv</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">xtx_inv_xt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+        <br/>
+        
+      
+    </p>
+    <p>
+        &copy; Copyright 2018, pysal developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

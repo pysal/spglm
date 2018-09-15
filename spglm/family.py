@@ -95,9 +95,6 @@ class Family(object):
 
            \mu_0 = (Y + \overline{Y})/2
 
-        Notes
-        -----
-        Only the Binomial family takes a different initial value.
         """
         return (y + y.mean())/2.
 
@@ -320,12 +317,6 @@ class Poisson(Family):
         resid_dev : array
             Deviance residuals as defined below
 
-        Notes
-        -----
-        .. math::
-
-           resid\_dev_i = sign(Y_i - \mu_i) * \sqrt{2 *
-                          (Y_i * \log(Y_i / \mu_i) - (Y_i - \mu_i))} / scale
         """
         endog_mu = self._clean(endog / mu)
         return (np.sign(endog - mu) *
@@ -352,13 +343,6 @@ class Poisson(Family):
             The deviance function at (endog,mu,freq_weights,scale) as defined
             below.
 
-        Notes
-        -----
-        If a constant term is included it is defined as
-
-        .. math::
-
-           D = 2 * \sum_i (freq\_weights_i * Y_i * \log(Y_i / \mu_i))/ scale
         '''
         endog_mu = self._clean(endog / mu)
         return 2 * np.sum(endog * freq_weights * np.log(endog_mu)) / scale
@@ -384,12 +368,6 @@ class Poisson(Family):
             The value of the loglikelihood function evaluated at
             (endog,mu,freq_weights,scale) as defined below.
 
-        Notes
-        -----
-        .. math::
-
-           llf = scale * \sum_i freq\_weights_i * (Y_i * \log(\mu_i) - \mu_i -
-                 \ln \Gamma(Y_i + 1))
         """
         loglike = np.sum(freq_weights * (endog * np.log(mu) - mu -
                          special.gammaln(endog + 1)))
@@ -601,11 +579,6 @@ class Gaussian(Family):
         resid_dev : array
             Deviance residuals as defined below
 
-        Notes
-        --------
-        .. math::
-
-           resid\_dev_i = (Y_i - \mu_i) / \sqrt{Var(\mu_i)} / scale
         """
 
         return (endog - mu) / np.sqrt(self.variance(mu)) / scale
@@ -631,11 +604,6 @@ class Gaussian(Family):
             The deviance function at (endog,mu,freq_weights,scale)
             as defined below.
 
-        Notes
-        --------
-        .. math::
-
-           D = \sum_i freq\_weights_i * (Y_i - \mu_i)^2 / scale
         """
         return np.sum((freq_weights * (endog - mu)**2)) / scale
 
@@ -660,27 +628,6 @@ class Gaussian(Family):
             The value of the loglikelihood function evaluated at
             (endog,mu,freq_weights,scale) as defined below.
 
-        Notes
-        -----
-        If the link is the identity link function then the
-        loglikelihood function is the same as the classical OLS model.
-
-        .. math::
-
-           llf = -nobs / 2 * (\log(SSR) + (1 + \log(2 \pi / nobs)))
-
-        where
-
-        .. math::
-           SSR = \sum_i (Y_i - g^{-1}(\mu_i))^2
-
-        If the links is not the identity link then the loglikelihood
-        function is defined as
-
-        .. math::
-
-           llf = \sum_i freq\_weights_i * ((Y_i * \mu_i - \mu_i^2 / 2) / scale-
-                 Y^2 / (2 * scale) - (1/2) * \log(2 * \pi * scale))
         """
         if isinstance(self.link, L.Power) and self.link.power == 1:
             # This is just the loglikelihood for classical OLS
@@ -709,11 +656,6 @@ class Gaussian(Family):
         resid_anscombe : array
             The Anscombe residuals for the Gaussian family defined below
 
-        Notes
-        --------
-        .. math::
-
-           resid\_anscombe_i = Y_i - \mu_i
         """
         return endog - mu
 
