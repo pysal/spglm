@@ -64,17 +64,18 @@ class GLM(RegressionPropsY):
     --------
     >>> import libpysal
     >>> from spglm.glm import GLM
-    >>> db = libpysal.open(libpysal.examples.get_path('columbus.dbf'),'r')
+    >>> from spglm import family
+    >>> db = libpysal.io.open(libpysal.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
-    >>> self.y = np.reshape(y, (49,1))
+    >>> y = np.reshape(y, (49,1))
     >>> X = []
     >>> X.append(db.by_col("INC"))
     >>> X.append(db.by_col("CRIME"))
-    >>> self.X = np.array(X).T
-    >>> model = GLM(self.y, self.X, family=Gaussian())
+    >>> X = np.array(X).T
+    >>> model = GLM(y, X, family=family.Gaussian())
     >>> results = model.fit()
     >>> results.params
-    [ 46.42818268,   0.62898397, -0.48488854]
+    array([46.42818268,  0.62898397, -0.48488854])
 
     """
     def __init__(self, y, X, family=family.Gaussian(), offset=None, y_fix = None,
@@ -245,28 +246,6 @@ class GLMResults(LikelihoodModelResults):
         normalized_cov_params   : array
                                 k*k, approximates [X.T*X]-1
 
-    Examples
-    --------
-    >>> import libpysal
-    >>> from spglm.glm import GLM, GLMResults
-    >>> db = libpysal.open(libpysal.examples.get_path('columbus.dbf'),'r')
-    >>> y = np.array(db.by_col("HOVAL"))
-    >>> self.y = np.reshape(y, (49,1))
-    >>> X = []
-    >>> X.append(db.by_col("INC"))
-    >>> X.append(db.by_col("CRIME"))
-    >>> self.X = np.array(X).T
-    >>> model = GLM(self.y, self.X, family=Gaussian())
-    >>> results1 = model.fit()
-    >>> results1.aic
-    408.73548964604873
-    >>> model = results1.model
-    >>> params = results1.params.flatten()
-    >>> predy = results1.predy
-    >>> w = results1.w
-    >>> results2 = GLMResults(model, params, predy, w)
-    >>> results2.aic
-    408.73548964604873
    
     """
     def __init__(self, model, params, mu, w):
