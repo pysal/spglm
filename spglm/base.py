@@ -340,28 +340,51 @@ class LikelihoodModelResults(Results):
     def conf_int(self, alpha=.05, cols=None, method='default'):
         """
         Returns the confidence interval of the fitted parameters.
+
         Parameters
         ----------
         alpha : float, optional
-            The significance level for the confidence interval.
-            ie., The default `alpha` = .05 returns a 95% confidence interval.
-        cols : array-like, optional
-            `cols` specifies which confidence intervals to return
-        method : string
-            Not Implemented Yet
-            Method to estimate the confidence_interval.
-            "Default" : uses self.bse which is based on inverse Hessian for MLE
-            "hjjh" :
-            "jac" :
-            "boot-bse"
-            "boot_quant"
-            "profile"
+                The significance level for the confidence interval.
+                ie., The default `alpha` = .05 returns a 95% confidence
+                interval.
+        cols  : array-like, optional
+               `cols` specifies which confidence intervals to return
+        method: string
+                 Not Implemented Yet
+                 Method to estimate the confidence_interval.
+                 "Default" : uses self.bse which is based on inverse Hessian
+                 for MLE.
+                 "hjjh" :
+                 "jac" :
+                 "boot-bse"
+                 "boot_quant"
+                 "profile"
+
         Returns
         --------
         conf_int : array
-            Each row contains [lower, upper] limits of the confidence interval
-            for the corresponding parameter. The first column contains all
-            lower, the second column contains all upper limits.
+                   Each row contains [lower, upper] limits of the confidence
+                   interval for the corresponding parameter. The first column
+                   contains all lower, the second column contains all upper
+                   limits.
+
+        Examples
+        --------
+        >>> import libpysal as ps
+        >>> from spglm.glm import GLM
+        >>> import numpy as np
+        >>> db = ps.io.open(ps.examples.get_path('columbus.dbf'),'r')
+        >>> y = np.array(db.by_col("HOVAL")).reshape((-1,1))
+        >>> X = []
+        >>> X.append(db.by_col("INC"))
+        >>> X.append(db.by_col("CRIME"))
+        >>> X = np.array(X).T
+        >>> model = GLM(y, X)
+        >>> results = model.fit()
+        >>> results.conf_int()
+        array([[ 20.57281401,  72.28355135],
+               [ -0.42138121,   1.67934915],
+               [ -0.84292086,  -0.12685622]])
 
         Notes
         -----

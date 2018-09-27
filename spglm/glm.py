@@ -65,7 +65,7 @@ class GLM(RegressionPropsY):
     --------
     >>> import libpysal
     >>> from spglm.glm import GLM
-    >>> from spglm.family import Gaussian
+    >>> from spglm import family
     >>> db = libpysal.io.open(libpysal.examples.get_path('columbus.dbf'),'r')
     >>> y = np.array(db.by_col("HOVAL"))
     >>> y = np.reshape(y, (49,1))
@@ -73,7 +73,7 @@ class GLM(RegressionPropsY):
     >>> X.append(db.by_col("INC"))
     >>> X.append(db.by_col("CRIME"))
     >>> X = np.array(X).T
-    >>> model = GLM(y, X, family=Gaussian())
+    >>> model = GLM(y, X, family=family.Gaussian())
     >>> results = model.fit()
     >>> results.params
     array([46.42818268,  0.62898397, -0.48488854])
