@@ -1,3 +1,4 @@
+__pycache__
 *.swp
 *.pyc
 .rope*
@@ -23,4 +24,4 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-__pycache__
+_build
