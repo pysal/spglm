@@ -15,4 +15,5 @@ GLM
 
     spglm.glm.GLM
 
+    spglm.glm.GLMResults
 
