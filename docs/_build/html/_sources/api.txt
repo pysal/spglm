@@ -14,6 +14,5 @@ GLM
    :toctree: generated/
 
     spglm.glm.GLM
-
     spglm.glm.GLMResults
 
