@@ -30,6 +30,7 @@ before_install:
 
 install:
   - conda install --yes pip
+  - pip install -r requirements.txt
   - conda install --yes --file requirements.txt;
   - pip install https://github.com/pysal/splot/archive/master.zip
   - pip install -r requirements_tests.txt
