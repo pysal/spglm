@@ -1,6 +1,11 @@
 **G**eneralized **L**inear **M**odeling
 =======================================
 
+[![Build Status](https://travis-ci.org/pysal/spglm.svg?branch=master)](https://travis-ci.org/pysal/spglm)
+[![Documentation Status](https://readthedocs.org/projects/spglm/badge/?version=latest)](https://spglm.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/spglm.svg)](https://badge.fury.io/py/spglm)
+
+
 This module is an adaptation of a portion of [GLM functionality from the
 Statsmodels](https://github.com/statsmodels/statsmodels/blob/master/statsmodels/genmod/generalized_linear_model.py) package, this it has been simplified and customized for the purposes of serving
 as the base for several other PySAL modules, namely SpInt and GWR. Currently, it
