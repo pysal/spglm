@@ -1,5 +1,5 @@
 import numpy as np
-import numpy.linalg as la
+from scipy import linalg
 from scipy import sparse as sp
 from scipy.sparse import linalg as spla
 from spreg.utils import spdot, spmultiply
@@ -33,8 +33,7 @@ def _compute_betas_gwr(y, x, wi):
     """
     xT = (x * wi).T
     xtx = np.dot(xT, x)
-    xtx_inv = la.inv(xtx)
-    xtx_inv_xt = np.dot(xtx_inv, xT)
+    xtx_inv_xt = linalg.solve(xtx, xT)
     betas = np.dot(xtx_inv_xt, y)
     return betas, xtx_inv_xt
 
