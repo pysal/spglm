@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import linalg
+import numpy.linalg as la
 from scipy import sparse as sp
 from scipy.sparse import linalg as spla
 from spreg.utils import spdot, spmultiply
