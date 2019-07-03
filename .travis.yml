@@ -37,8 +37,8 @@ install:
         echo 'testing pypi libpysal spreg' && pip install libpysal spreg;
     else
         echo 'testing git libpysal spreg';
-        git clone https://github.com/pysal/libpysal/archive/master.zip;
-        git clone https://github.com/pysal/spreg/archive/master.zip;
+        git install https://github.com/pysal/libpysal/archive/master.zip;
+        git install https://github.com/pysal/spreg/archive/master.zip;
     fi;
 
 
