@@ -36,6 +36,8 @@ def setup_package():
         download_url='https://pypi.python.org/pypi/spglm',
         maintainer='Taylor M. Oshan', 
         maintainer_email='tayoshan@gmail.com',
+        py_modules=['spglm'],
+        python_requires='>3.5',
         test_suite = 'nose.collector',
         tests_require=['nose'],
         keywords='spatial statistics',
@@ -48,8 +50,8 @@ def setup_package():
             'Topic :: Scientific/Engineering :: GIS',
             'License :: OSI Approved :: BSD License',
             'Programming Language :: Python',
-            'Programming Language :: Python :: 3.5',
-            'Programming Language :: Python :: 3.6'
+            'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7'
             ],
         license='3-Clause BSD',
         packages=find_packages(),
@@ -59,4 +61,4 @@ def setup_package():
         cmdclass = {'build.py':build_py})
 
 if __name__ == '__main__':
-	setup_package()
+    setup_package()
