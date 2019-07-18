@@ -1,26 +1,28 @@
 # Changes
 
-Version 1.0.6 (2018-11-1)
+Version 1.0.7 (2018-7-18)
 
-We closed a total of 12 issues (enhancements and bug fixes) through 4 pull requests, since our last release on 2018-08-26.
+We closed a total of 13 issues (enhancements and bug fixes) through 6 pull requests, since our last release on 2018-11-1.
 
 ## Issues Closed
+  - version bump (#24)
+  -  (docs) change to readthedocs v2 (#22)
+  - debug travis testing (#23)
+  - transition to python 3.6 and 3.7 (#21)
+  - use solve instead of inverse (#20)
+  - add channgelog (#18)
   - include tests in release (#9)
-  - fix docstrings (as well as some within interactive examples) (#14)
-  - Fix docs (#17)
-  - Submodule (#16)
-  - submodule_contract (#13)
-  - Inconsistent metadata in setup.py (#10)
-  - adapting spglm to new libpysal (#12)
-  - move to using libpysal.io.open rather than just libpysal.open (#11)
 
 ## Pull Requests
-  - fix docstrings (as well as some within interactive examples) (#14)
-  - Fix docs (#17)
-  - Submodule (#16)
-  - adapting spglm to new libpysal (#12)
+  - version bump (#24)
+  -  (docs) change to readthedocs v2 (#22)
+  - debug travis testing (#23)
+  - transition to python 3.6 and 3.7 (#21)
+  - use solve instead of inverse (#20)
+  - add channgelog (#18)
 
 The following individuals contributed to this release:
 
+  - Tayloroshan
   - Wei Kang
   - Taylor Oshan
