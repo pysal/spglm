@@ -89,7 +89,7 @@ class GLM(RegressionPropsY):
         USER.check_y(y, self.n)
         self.y = y
         if constant:
-            self.X = USER.check_constant(X)
+            self.X,_,_ = USER.check_constant(X)
         else:
             self.X = X
         self.family = family
