@@ -1,7 +1,7 @@
 **G**eneralized **L**inear **M**odeling
 =======================================
 
-[![Build Status](https://travis-ci.org/pysal/spglm.svg?branch=master)](https://travis-ci.org/pysal/spglm)
+[![Continuous Integration](https://github.com/pysal/spglm/actions/workflows/testing.yml/badge.svg)]
 [![Documentation Status](https://readthedocs.org/projects/spglm/badge/?version=latest)](https://spglm.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/spglm.svg)](https://badge.fury.io/py/spglm)
 
