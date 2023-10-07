@@ -797,7 +797,7 @@ class Binomial(Family):
         self.link = link()
 
     def starting_mu(self, y):
-        """
+        r"""
         The starting values for the IRLS algorithm for the Binomial family.
         A good choice for the binomial family is :math:`\mu_0 = (Y_i + 0.5)/2`
         """
@@ -980,7 +980,7 @@ class Binomial(Family):
             Journal of the Royal Statistical Society B. 30, 248-75.
 
         """
-        cox_snell = lambda x: (
+        cox_snell = lambda x: (  # noqa E731 - skip "don't use lambda"
             special.betainc(2 / 3.0, 2 / 3.0, x) * special.beta(2 / 3.0, 2 / 3.0)
         )
         return np.sqrt(self.n) * (

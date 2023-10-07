@@ -306,7 +306,10 @@ class LikelihoodModelResults(Results):
             "l1",
             "l1_cvxopt_cp",
         ]:
-            dot_fun = nan_dot
+            ######################################################################
+            # TODO - remove GH#38
+            dot_fun = nan_dot  # noqa F821 - `nan_dot` not defined - should remove
+            ######################################################################
         else:
             dot_fun = np.dot
 

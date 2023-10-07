@@ -234,26 +234,26 @@ class GLMResults(LikelihoodModelResults):
         tr_S          : trace of the hat matrix S
         resid_response          : array
                                   response residuals; defined as y-mu
-        resid_pearson           : array
-                                  Pearson residuals; defined as (y-mu)/sqrt(VAR(mu))
-                                  where VAR is the distribution specific variance
-                                  function; see family.py and varfuncs.py for more information.
-        resid_working           : array
-                                  Working residuals; the working residuals are defined as
-                                  resid_response/link'(mu); see links.py for the
-                                  derivatives of the link functions.
+        resid_pearson : array
+                        Pearson residuals; defined as (y-mu)/sqrt(VAR(mu))
+                        where VAR is the distribution specific variance
+                        function; see family.py and varfuncs.py for more information.
+        resid_working  : array
+                         Working residuals; the working residuals are defined as
+                         resid_response/link'(mu); see links.py for the
+                         derivatives of the link functions.
 
-        resid_anscombe          : array
-                                  Anscombe residuals; see family.py for
-                                  distribution-specific Anscombe residuals.
+        resid_anscombe : array
+                         Anscombe residuals; see family.py for
+                         distribution-specific Anscombe residuals.
 
-        resid_deviance          : array
-                                  deviance residuals; see family.py for
-                                  distribution-specific deviance residuals.
+        resid_deviance : array
+                         deviance residuals; see family.py for
+                         distribution-specific deviance residuals.
 
-        pearson_chi2            : float
-                                  chi-Squared statistic is defined as the sum
-                                  of the squares of the Pearson residuals
+        pearson_chi2   : float
+                         chi-Squared statistic is defined as the sum
+                         of the squares of the Pearson residuals
 
         normalized_cov_params   : array
                                 k*k, approximates [X.T*X]-1
@@ -339,7 +339,7 @@ class GLMResults(LikelihoodModelResults):
     @cache_readonly
     def null(self):
         y = np.reshape(self.y, (-1, 1))
-        model = self.model
+        model = self.model  # noqa F841 - `model` never used
         X = np.ones((len(y), 1))
         null_mod = GLM(y, X, family=self.family, offset=self.offset, constant=False)
         return null_mod.fit().mu

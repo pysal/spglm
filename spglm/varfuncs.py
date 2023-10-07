@@ -114,9 +114,14 @@ class Power(object):
         """
         Derivative of the variance function v'(mu)
         """
-        from statsmodels.tools.numdiff import approx_fprime_cs, approx_fprime
 
-        # return approx_fprime_cs(mu, self)  # TODO fix breaks in `fabs
+        ########################################################################
+        # `approx_fprime_cs` is imported by unused
+        from statsmodels.tools.numdiff import approx_fprime_cs  # noqa F401
+        #return approx_fprime_cs(mu, self)  # TODO fix breaks in `fabs
+        ########################################################################
+        
+        from statsmodels.tools.numdiff import approx_fprime
         # TODO: diag is workaround problem with numdiff for 1d
         return np.diag(approx_fprime(mu, self))
 
@@ -205,7 +210,7 @@ class Binomial(object):
         """
         Derivative of the variance function v'(mu)
         """
-        from statsmodels.tools.numdiff import approx_fprime_cs, approx_fprime
+        from statsmodels.tools.numdiff import approx_fprime_cs
 
         # TODO: diag workaround proplem with numdiff for 1d
         return np.diag(approx_fprime_cs(mu, self))
