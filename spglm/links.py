@@ -1,9 +1,10 @@
-'''
+"""
 Defines the link functions to be used with GLM and GEE families.
-'''
+"""
 
 import numpy as np
 import scipy.stats
+
 FLOAT_EPS = np.finfo(float).eps
 
 
@@ -70,6 +71,7 @@ class Link(object):
         implemented through numerical differentiation
         """
         from statsmodels.tools.numdiff import approx_fprime_cs
+
         # TODO: workaround proplem with numdiff for 1d
         return np.diag(approx_fprime_cs(p, self.deriv))
 
@@ -123,7 +125,7 @@ class Logit(Link):
         pclip : array
             Clipped probabilities
         """
-        return np.clip(p, FLOAT_EPS, 1. - FLOAT_EPS)
+        return np.clip(p, FLOAT_EPS, 1.0 - FLOAT_EPS)
 
     def __call__(self, p):
         """
@@ -144,7 +146,7 @@ class Logit(Link):
         g(p) = log(p / (1 - p))
         """
         p = self._clean(p)
-        return np.log(p / (1. - p))
+        return np.log(p / (1.0 - p))
 
     def inverse(self, z):
         """
@@ -166,10 +168,9 @@ class Logit(Link):
         """
         z = np.asarray(z)
         t = np.exp(-z)
-        return 1. / (1. + t)
+        return 1.0 / (1.0 + t)
 
     def deriv(self, p):
-
         """
         Derivative of the logit transform
 
@@ -191,7 +192,7 @@ class Logit(Link):
         logit = Logit()
         """
         p = self._clean(p)
-        return 1. / (p * (1 - p))
+        return 1.0 / (p * (1 - p))
 
     def inverse_deriv(self, z):
         """
@@ -209,8 +210,7 @@ class Logit(Link):
 
         """
         t = np.exp(z)
-        return t/(1 + t)**2
-
+        return t / (1 + t) ** 2
 
     def deriv2(self, p):
         """
@@ -227,7 +227,8 @@ class Logit(Link):
             The value of the second derivative of the logit function
         """
         v = p * (1 - p)
-        return (2*p - 1) / v**2
+        return (2 * p - 1) / v**2
+
 
 class logit(Logit):
     pass
@@ -251,7 +252,7 @@ class Power(Link):
     identity = Power(power=1.)
     """
 
-    def __init__(self, power=1.):
+    def __init__(self, power=1.0):
         self.power = power
 
     def __call__(self, p):
@@ -295,7 +296,7 @@ class Power(Link):
         g^(-1)(z`) = `z`**(1/`power`)
         """
 
-        p = np.power(z, 1. / self.power)
+        p = np.power(z, 1.0 / self.power)
         return p
 
     def deriv(self, p):
@@ -353,7 +354,7 @@ class Power(Link):
             The value of the derivative of the inverse of the power transform
         function
         """
-        return np.power(z, (1 - self.power)/self.power) / self.power
+        return np.power(z, (1 - self.power) / self.power) / self.power
 
 
 class inverse_power(Power):
@@ -366,8 +367,9 @@ class inverse_power(Power):
 
     Alias of statsmodels.family.links.Power(power=-1.)
     """
+
     def __init__(self):
-        super(inverse_power, self).__init__(power=-1.)
+        super(inverse_power, self).__init__(power=-1.0)
 
 
 class sqrt(Power):
@@ -380,8 +382,9 @@ class sqrt(Power):
 
     Alias of statsmodels.family.links.Power(power=.5)
     """
+
     def __init__(self):
-        super(sqrt, self).__init__(power=.5)
+        super(sqrt, self).__init__(power=0.5)
 
 
 class inverse_squared(Power):
@@ -394,8 +397,9 @@ class inverse_squared(Power):
 
     Alias of statsmodels.family.links.Power(power=2.)
     """
+
     def __init__(self):
-        super(inverse_squared, self).__init__(power=-2.)
+        super(inverse_squared, self).__init__(power=-2.0)
 
 
 class identity(Power):
@@ -408,8 +412,9 @@ class identity(Power):
 
     Alias of statsmodels.family.links.Power(power=1.)
     """
+
     def __init__(self):
-        super(identity, self).__init__(power=1.)
+        super(identity, self).__init__(power=1.0)
 
 
 class Log(Link):
@@ -485,7 +490,7 @@ class Log(Link):
         g'(x) = 1/x
         """
         p = self._clean(p)
-        return 1. / p
+        return 1.0 / p
 
     def deriv2(self, p):
         """
@@ -506,7 +511,7 @@ class Log(Link):
         g''(x) = -1/x^2
         """
         p = self._clean(p)
-        return -1. / p**2
+        return -1.0 / p**2
 
     def inverse_deriv(self, z):
         """
@@ -534,6 +539,7 @@ class log(Log):
     -----
     log is a an alias of Log.
     """
+
     pass
 
 
@@ -618,7 +624,7 @@ class CDFLink(Logit):
         g'(`p`) = 1./ `dbn`.pdf(`dbn`.ppf(`p`))
         """
         p = self._clean(p)
-        return 1. / self.dbn.pdf(self.dbn.ppf(p))
+        return 1.0 / self.dbn.pdf(self.dbn.ppf(p))
 
     def deriv2(self, p):
         """
@@ -627,6 +633,7 @@ class CDFLink(Logit):
         implemented through numerical differentiation
         """
         from statsmodels.tools.numdiff import approx_fprime
+
         p = np.atleast_1d(p)
         # Note: special function for norm.ppf does not support complex
         return np.diag(approx_fprime(p, self.deriv, centered=True))
@@ -645,7 +652,7 @@ class CDFLink(Logit):
         g^(-1)'(z) : array
             The value of the derivative of the inverse of the logit function
         """
-        return 1/self.deriv(self.inverse(z))
+        return 1 / self.deriv(self.inverse(z))
 
 
 class probit(CDFLink):
@@ -658,6 +665,7 @@ class probit(CDFLink):
 
     probit is an alias of CDFLink.
     """
+
     pass
 
 
@@ -690,8 +698,9 @@ class cauchy(CDFLink):
             Value of the second derivative of Cauchy link function at `p`
         """
         a = np.pi * (p - 0.5)
-        d2 = 2 * np.pi**2 * np.sin(a) / np.cos(a)**3
+        d2 = 2 * np.pi**2 * np.sin(a) / np.cos(a) ** 3
         return d2
+
 
 class CLogLog(Logit):
     """
@@ -704,6 +713,7 @@ class CLogLog(Logit):
     -----
     CLogLog is untested.
     """
+
     def __call__(self, p):
         """
         C-Log-Log transform link function
@@ -765,7 +775,7 @@ class CLogLog(Logit):
         g'(p) = - 1 / ((p-1)*log(1-p))
         """
         p = self._clean(p)
-        return 1. / ((p - 1) * (np.log(1 - p)))
+        return 1.0 / ((p - 1) * (np.log(1 - p)))
 
     def deriv2(self, p):
         """
@@ -783,7 +793,7 @@ class CLogLog(Logit):
         """
         p = self._clean(p)
         fl = np.log(1 - p)
-        d2 = -1 / ((1 - p)**2 * fl)
+        d2 = -1 / ((1 - p) ** 2 * fl)
         d2 *= 1 + 1 / fl
         return d2
 
@@ -815,11 +825,12 @@ class cloglog(CLogLog):
     cloglog is an alias for CLogLog
     cloglog = CLogLog()
     """
+
     pass
 
 
 class NegativeBinomial(object):
-    '''
+    """
     The negative binomial link function
 
     Parameters
@@ -828,16 +839,16 @@ class NegativeBinomial(object):
         Alpha is the ancillary parameter of the Negative Binomial link
         function. It is assumed to be nonstochastic.  The default value is 1.
         Permissible values are usually assumed to be in (.01, 2).
-    '''
+    """
 
-    def __init__(self, alpha=1.):
+    def __init__(self, alpha=1.0):
         self.alpha = alpha
 
     def _clean(self, x):
         return np.clip(x, FLOAT_EPS, np.inf)
 
     def __call__(self, p):
-        '''
+        """
         Negative Binomial transform link function
 
         Parameters
@@ -853,12 +864,12 @@ class NegativeBinomial(object):
         Notes
         -----
         g(p) = log(p/(p + 1/alpha))
-        '''
+        """
         p = self._clean(p)
-        return np.log(p/(p + 1/self.alpha))
+        return np.log(p / (p + 1 / self.alpha))
 
     def inverse(self, z):
-        '''
+        """
         Inverse of the negative binomial transform
 
         Parameters
@@ -874,11 +885,11 @@ class NegativeBinomial(object):
         Notes
         -----
         g^(-1)(z) = exp(z)/(alpha*(1-exp(z)))
-        '''
-        return -1/(self.alpha * (1 - np.exp(-z)))
+        """
+        return -1 / (self.alpha * (1 - np.exp(-z)))
 
     def deriv(self, p):
-        '''
+        """
         Derivative of the negative binomial transform
 
         Parameters
@@ -894,11 +905,11 @@ class NegativeBinomial(object):
         Notes
         -----
         g'(x) = 1/(x+alpha*x^2)
-        '''
-        return 1/(p + self.alpha * p**2)
+        """
+        return 1 / (p + self.alpha * p**2)
 
-    def deriv2(self,p):
-        '''
+    def deriv2(self, p):
+        """
         Second derivative of the negative binomial link function.
 
         Parameters
@@ -915,13 +926,13 @@ class NegativeBinomial(object):
         Notes
         -----
         g''(x) = -(1+2*alpha*x)/(x+alpha*x^2)^2
-        '''
+        """
         numer = -(1 + 2 * self.alpha * p)
-        denom = (p + self.alpha * p**2)**2
+        denom = (p + self.alpha * p**2) ** 2
         return numer / denom
 
     def inverse_deriv(self, z):
-        '''
+        """
         Derivative of the inverse of the negative binomial transform
 
         Parameters
@@ -934,9 +945,9 @@ class NegativeBinomial(object):
         g^(-1)'(z) : array
             The value of the derivative of the inverse of the negative
             binomial link
-        '''
+        """
         t = np.exp(z)
-        return t / (self.alpha * (1-t)**2)
+        return t / (self.alpha * (1 - t) ** 2)
 
 
 class nbinom(NegativeBinomial):
@@ -950,4 +961,5 @@ class nbinom(NegativeBinomial):
     nbinom is an alias of NegativeBinomial.
     nbinom = NegativeBinomial(alpha=1.)
     """
+
     pass

@@ -2,9 +2,10 @@
 Variance functions for use with the link functions in statsmodels.family.links
 """
 
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 import numpy as np
+
 FLOAT_EPS = np.finfo(float).eps
 
 
@@ -51,6 +52,7 @@ class VarianceFunction(object):
         Derivative of the variance function v'(mu)
         """
         from statsmodels.tools.numdiff import approx_fprime_cs
+
         # TODO: diag workaround proplem with numdiff for 1d
         return np.diag(approx_fprime_cs(mu, self))
 
@@ -89,7 +91,7 @@ class Power(object):
     mu_cubed = Power(power=3)
     """
 
-    def __init__(self, power=1.):
+    def __init__(self, power=1.0):
         self.power = power
 
     def __call__(self, mu):
@@ -113,6 +115,7 @@ class Power(object):
         Derivative of the variance function v'(mu)
         """
         from statsmodels.tools.numdiff import approx_fprime_cs, approx_fprime
+
         # return approx_fprime_cs(mu, self)  # TODO fix breaks in `fabs
         # TODO: diag is workaround problem with numdiff for 1d
         return np.diag(approx_fprime(mu, self))
@@ -203,6 +206,7 @@ class Binomial(object):
         Derivative of the variance function v'(mu)
         """
         from statsmodels.tools.numdiff import approx_fprime_cs, approx_fprime
+
         # TODO: diag workaround proplem with numdiff for 1d
         return np.diag(approx_fprime_cs(mu, self))
 
@@ -218,7 +222,7 @@ This is an alias of Binomial(n=1)
 
 
 class NegativeBinomial(object):
-    '''
+    """
     Negative binomial variance function
 
     Parameters
@@ -243,9 +247,9 @@ class NegativeBinomial(object):
 
     A private method _clean trims the data by machine epsilon so that p is
     in (0,inf)
-    '''
+    """
 
-    def __init__(self, alpha=1.):
+    def __init__(self, alpha=1.0):
         self.alpha = alpha
 
     def _clean(self, p):

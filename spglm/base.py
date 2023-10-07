@@ -1,4 +1,3 @@
-
 from __future__ import print_function
 import numpy as np
 from scipy import stats
@@ -24,8 +23,9 @@ class Results(object):
     def initialize(self, model, params, **kwd):
         self.params = params
         self.model = model
-        if hasattr(model, 'k_constant'):
+        if hasattr(model, "k_constant"):
             self.k_constant = model.k_constant
+
 
 # TODO: public method?
 
@@ -176,14 +176,13 @@ class LikelihoodModelResults(Results):
                 True: converged. False: did not converge.
             allvecs : list
                 Results at each iteration.
-        """
+    """
 
     # by default we use normal distribution
     # can be overwritten by instances or subclasses
     use_t = False
 
-    def __init__(self, model, params, normalized_cov_params=None, scale=1.,
-                 **kwargs):
+    def __init__(self, model, params, normalized_cov_params=None, scale=1.0, **kwargs):
         super(LikelihoodModelResults, self).__init__(model, params)
         self.normalized_cov_params = normalized_cov_params
         self.scale = scale
@@ -191,46 +190,55 @@ class LikelihoodModelResults(Results):
         # robust covariance
         # We put cov_type in kwargs so subclasses can decide in fit whether to
         # use this generic implementation
-        if 'use_t' in kwargs:
-            use_t = kwargs['use_t']
+        if "use_t" in kwargs:
+            use_t = kwargs["use_t"]
             if use_t is not None:
                 self.use_t = use_t
-        if 'cov_type' in kwargs:
-            cov_type = kwargs.get('cov_type', 'nonrobust')
-            cov_kwds = kwargs.get('cov_kwds', {})
+        if "cov_type" in kwargs:
+            cov_type = kwargs.get("cov_type", "nonrobust")
+            cov_kwds = kwargs.get("cov_kwds", {})
 
-            if cov_type == 'nonrobust':
-                self.cov_type = 'nonrobust'
-                self.cov_kwds = {'description': 'Standard Errors assume that the ' +
-                                 'covariance matrix of the errors is correctly ' +
-                                 'specified.'}
+            if cov_type == "nonrobust":
+                self.cov_type = "nonrobust"
+                self.cov_kwds = {
+                    "description": "Standard Errors assume that the "
+                    + "covariance matrix of the errors is correctly "
+                    + "specified."
+                }
             else:
                 from statsmodels.base.covtype import get_robustcov_results
+
                 if cov_kwds is None:
                     cov_kwds = {}
                 use_t = self.use_t
                 # TODO: we shouldn't need use_t in get_robustcov_results
-                get_robustcov_results(self, cov_type=cov_type, use_self=True,
-                                      use_t=use_t, **cov_kwds)
+                get_robustcov_results(
+                    self, cov_type=cov_type, use_self=True, use_t=use_t, **cov_kwds
+                )
 
     def normalized_cov_params(self):
         raise NotImplementedError
 
-    def _get_robustcov_results(self, cov_type='nonrobust', use_self=True,
-                               use_t=None, **cov_kwds):
+    def _get_robustcov_results(
+        self, cov_type="nonrobust", use_self=True, use_t=None, **cov_kwds
+    ):
         from statsmodels.base.covtype import get_robustcov_results
+
         if cov_kwds is None:
             cov_kwds = {}
 
-        if cov_type == 'nonrobust':
-            self.cov_type = 'nonrobust'
-            self.cov_kwds = {'description': 'Standard Errors assume that the ' +
-                             'covariance matrix of the errors is correctly ' +
-                             'specified.'}
+        if cov_type == "nonrobust":
+            self.cov_type = "nonrobust"
+            self.cov_kwds = {
+                "description": "Standard Errors assume that the "
+                + "covariance matrix of the errors is correctly "
+                + "specified."
+            }
         else:
             # TODO: we shouldn't need use_t in get_robustcov_results
-            get_robustcov_results(self, cov_type=cov_type, use_self=True,
-                                  use_t=use_t, **cov_kwds)
+            get_robustcov_results(
+                self, cov_type=cov_type, use_self=True, use_t=use_t, **cov_kwds
+            )
 
     @cache_readonly
     def llf(self):
@@ -250,13 +258,14 @@ class LikelihoodModelResults(Results):
     @cache_readonly
     def pvalues(self):
         if self.use_t:
-            df_resid = getattr(self, 'df_resid_inference', self.df_resid)
+            df_resid = getattr(self, "df_resid_inference", self.df_resid)
             return stats.t.sf(np.abs(self.tvalues), df_resid) * 2
         else:
             return stats.norm.sf(np.abs(self.tvalues)) * 2
 
-    def cov_params(self, r_matrix=None, column=None, scale=None, cov_p=None,
-                   other=None):
+    def cov_params(
+        self, r_matrix=None, column=None, scale=None, cov_p=None, other=None
+    ):
         """
         Returns the variance/covariance matrix.
         The variance/covariance matrix can be of a linear contrast
@@ -293,24 +302,30 @@ class LikelihoodModelResults(Results):
         OR
         ``(scale) * (X.T X)^(-1)[column][:,column]`` if column is 1d
         """
-        if (hasattr(self, 'mle_settings') and
-                self.mle_settings['optimizer'] in ['l1', 'l1_cvxopt_cp']):
+        if hasattr(self, "mle_settings") and self.mle_settings["optimizer"] in [
+            "l1",
+            "l1_cvxopt_cp",
+        ]:
             dot_fun = nan_dot
         else:
             dot_fun = np.dot
 
-        if (cov_p is None and self.normalized_cov_params is None and
-                not hasattr(self, 'cov_params_default')):
-            raise ValueError('need covariance of parameters for computing '
-                             '(unnormalized) covariances')
+        if (
+            cov_p is None
+            and self.normalized_cov_params is None
+            and not hasattr(self, "cov_params_default")
+        ):
+            raise ValueError(
+                "need covariance of parameters for computing "
+                "(unnormalized) covariances"
+            )
         if column is not None and (r_matrix is not None or other is not None):
-            raise ValueError('Column should be specified without other '
-                             'arguments.')
+            raise ValueError("Column should be specified without other " "arguments.")
         if other is not None and r_matrix is None:
-            raise ValueError('other can only be specified with r_matrix')
+            raise ValueError("other can only be specified with r_matrix")
 
         if cov_p is None:
-            if hasattr(self, 'cov_params_default'):
+            if hasattr(self, "cov_params_default"):
                 cov_p = self.cov_params_default
             else:
                 if scale is None:
@@ -337,7 +352,7 @@ class LikelihoodModelResults(Results):
         else:  # if r_matrix is None and column is None:
             return cov_p
 
-    def conf_int(self, alpha=.05, cols=None, method='default'):
+    def conf_int(self, alpha=0.05, cols=None, method="default"):
         """
         Returns the confidence interval of the fitted parameters.
 
@@ -396,7 +411,7 @@ class LikelihoodModelResults(Results):
 
         if self.use_t:
             dist = stats.t
-            df_resid = getattr(self, 'df_resid_inference', self.df_resid)
+            df_resid = getattr(self, "df_resid_inference", self.df_resid)
             q = dist.ppf(1 - alpha / 2, df_resid)
         else:
             dist = stats.norm
