@@ -1,7 +1,7 @@
 **G**eneralized **L**inear **M**odeling
 =======================================
 
-[![Continuous Integration](https://github.com/pysal/spglm/actions/workflows/testing.yml/badge.svg)]
+[![Continuous Integration](https://github.com/pysal/spglm/actions/workflows/testing.yml/badge.svg)](https://github.com/pysal/spglm/actions/workflows/testing.yml)
 [![Documentation Status](https://readthedocs.org/projects/spglm/badge/?version=latest)](https://spglm.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/spglm.svg)](https://badge.fury.io/py/spglm)
 
