@@ -306,7 +306,10 @@ class LikelihoodModelResults(Results):
             "l1",
             "l1_cvxopt_cp",
         ]:
-            dot_fun = nan_dot
+            ######################################################################
+            # TODO - remove GH#38
+            dot_fun = nan_dot  # noqa F821 - `nan_dot` not defined - should remove
+            ######################################################################
         else:
             dot_fun = np.dot
 
@@ -397,9 +400,9 @@ class LikelihoodModelResults(Results):
         >>> model = GLM(y, X)
         >>> results = model.fit()
         >>> results.conf_int()
-        array([[ 20.57281401,  72.28355135],
-               [ -0.42138121,   1.67934915],
-               [ -0.84292086,  -0.12685622]])
+        array([[20.57281401, 72.28355135],
+               [-0.42138121,  1.67934915],
+               [-0.84292086, -0.12685622]])
 
         Notes
         -----

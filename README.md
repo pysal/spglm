@@ -4,6 +4,7 @@
 [![Continuous Integration](https://github.com/pysal/spglm/actions/workflows/testing.yml/badge.svg)](https://github.com/pysal/spglm/actions/workflows/testing.yml)
 [![Documentation Status](https://readthedocs.org/projects/spglm/badge/?version=latest)](https://spglm.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/spglm.svg)](https://badge.fury.io/py/spglm)
+[![codecov](https://codecov.io/gh/pysal/spglm/branch/main/graph/badge.svg)](https://codecov.io/gh/pysal/spglm)
 
 
 This module is an adaptation of a portion of [GLM functionality from the

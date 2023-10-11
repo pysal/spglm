@@ -17,7 +17,10 @@ try:
 except ImportError:
     import re
 
-    string_types = basestring
+    ######################################################################
+    # TODO - remove GH#39
+    string_types = basestring  # noqa F821 - `basestring` not defined - should remove
+    ######################################################################
 
     class NumpyVersion:
         """Parse and compare numpy version strings.
@@ -365,7 +368,7 @@ class CachedAttribute(object):
                 setattr(_cache, name, _cachedval)
             # Update the reset list if needed (and possible)
             resetlist = self.resetlist
-            if resetlist is not ():
+            if resetlist != ():
                 try:
                     _cache._resetdict[name] = self.resetlist
                 except AttributeError:
