@@ -1,4 +1,3 @@
-
 from __future__ import absolute_import, print_function
 import numpy as np
 import warnings
@@ -17,9 +16,10 @@ try:
     from numpy.lib._version import NumpyVersion
 except ImportError:
     import re
+
     string_types = basestring
 
-    class NumpyVersion():
+    class NumpyVersion:
         """Parse and compare numpy version strings.
         Numpy has the following versioning scheme (numbers given are examples; they
         can be >9) in principle):
@@ -52,26 +52,27 @@ except ImportError:
 
         def __init__(self, vstring):
             self.vstring = vstring
-            ver_main = re.match(r'\d[.]\d+[.]\d+', vstring)
+            ver_main = re.match(r"\d[.]\d+[.]\d+", vstring)
             if not ver_main:
                 raise ValueError("Not a valid numpy version string")
 
             self.version = ver_main.group()
-            self.major, self.minor, self.bugfix = [int(x) for x in
-                                                   self.version.split('.')]
+            self.major, self.minor, self.bugfix = [
+                int(x) for x in self.version.split(".")
+            ]
             if len(vstring) == ver_main.end():
-                self.pre_release = 'final'
+                self.pre_release = "final"
             else:
-                alpha = re.match(r'a\d', vstring[ver_main.end():])
-                beta = re.match(r'b\d', vstring[ver_main.end():])
-                rc = re.match(r'rc\d', vstring[ver_main.end():])
+                alpha = re.match(r"a\d", vstring[ver_main.end() :])
+                beta = re.match(r"b\d", vstring[ver_main.end() :])
+                rc = re.match(r"rc\d", vstring[ver_main.end() :])
                 pre_rel = [m for m in [alpha, beta, rc] if m is not None]
                 if pre_rel:
                     self.pre_release = pre_rel[0].group()
                 else:
-                    self.pre_release = ''
+                    self.pre_release = ""
 
-            self.is_devversion = bool(re.search(r'.dev-', vstring))
+            self.is_devversion = bool(re.search(r".dev-", vstring))
 
         def _compare_version(self, other):
             """Compare major.minor.bugfix"""
@@ -98,9 +99,9 @@ except ImportError:
             """Compare alpha/beta/rc/final."""
             if self.pre_release == other.pre_release:
                 vercmp = 0
-            elif self.pre_release == 'final':
+            elif self.pre_release == "final":
                 vercmp = 1
-            elif other.pre_release == 'final':
+            elif other.pre_release == "final":
                 vercmp = -1
             elif self.pre_release > other.pre_release:
                 vercmp = 1
@@ -111,8 +112,7 @@ except ImportError:
 
         def _compare(self, other):
             if not isinstance(other, (string_types, NumpyVersion)):
-                raise ValueError(
-                    "Invalid object to compare with NumpyVersion.")
+                raise ValueError("Invalid object to compare with NumpyVersion.")
 
             if isinstance(other, string_types):
                 other = NumpyVersion(other)
@@ -177,14 +177,15 @@ class ResettableCache(dict):
     def __setitem__(self, key, value):
         dict.__setitem__(self, key, value)
         # if hasattr needed for unpickling with protocol=2
-        if hasattr(self, '_resetdict'):
+        if hasattr(self, "_resetdict"):
             for mustreset in self._resetdict.get(key, []):
                 self[mustreset] = None
 
     def __delitem__(self, key):
         dict.__delitem__(self, key)
         for mustreset in self._resetdict.get(key, []):
-            del(self[mustreset])
+            del self[mustreset]
+
 
 #    def __getstate__(self):
 #        print('pickling wrapper', self.__dict__)
@@ -213,7 +214,7 @@ def _next_regular(target):
     if not (target & (target - 1)):
         return target
 
-    match = float('inf')  # Anything found will be smaller
+    match = float("inf")  # Anything found will be smaller
     p5 = 1
     while p5 < target:
         p35 = p5
@@ -246,9 +247,10 @@ def _next_regular(target):
     return match
 
 
-if NumpyVersion(np.__version__) >= '1.7.1':
+if NumpyVersion(np.__version__) >= "1.7.1":
     np_matrix_rank = np.linalg.matrix_rank
 else:
+
     def np_matrix_rank(M, tol=None):
         """
         Return matrix rank of array using SVD method
@@ -319,7 +321,7 @@ else:
         """
         M = np.asarray(M)
         if M.ndim > 2:
-            raise TypeError('array should have 2 or fewer dimensions')
+            raise TypeError("array should have 2 or fewer dimensions")
         if M.ndim < 2:
             return int(not all(M == 0))
         S = np.linalg.svd(M, compute_uv=False)
@@ -333,11 +335,10 @@ class CacheWriteWarning(UserWarning):
 
 
 class CachedAttribute(object):
-
     def __init__(self, func, cachename=None, resetlist=None):
         self.fget = func
         self.name = func.__name__
-        self.cachename = cachename or '_cache'
+        self.cachename = cachename or "_cache"
         self.resetlist = resetlist or ()
 
     def __get__(self, obj, type=None):
@@ -389,9 +390,7 @@ class _cache_readonly(object):
         self.resetlist = resetlist or None
 
     def __call__(self, func):
-        return CachedAttribute(func,
-                               cachename=self.cachename,
-                               resetlist=self.resetlist)
+        return CachedAttribute(func, cachename=self.cachename, resetlist=self.resetlist)
 
 
 cache_readonly = _cache_readonly()
