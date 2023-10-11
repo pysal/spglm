@@ -1,0 +1,17 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  # required
+  - git
+  - libpysal=4.5
+  - numpy=1.23
+  - pip
+  - scipy=1.8
+  - spreg=1.2
+  # testing
+  - codecov
+  - pytest
+  - pytest-cov
+  - pytest-xdist

@@ -1,0 +1,23 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  # required
+  - git
+  - libpysal
+  - numpy
+  - pip
+  - scipy
+  - spreg
+  # testing
+  - codecov
+  - pytest
+  - pytest-cov
+  - pytest-xdist
+  # docs (this env only)
+  - nbsphinx
+  - numpydoc
+  - sphinx>=1.4.3
+  - sphinxcontrib-bibtex
+  - sphinx_bootstrap_theme
