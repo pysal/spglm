@@ -16,7 +16,7 @@ try:
     from numpy.lib._version import NumpyVersion
 except ImportError:
     import re
-    
+
     ######################################################################
     # TODO - remove GH#39
     string_types = basestring  # noqa F821 - `nan_dot` not defined - should remove
