@@ -19,7 +19,7 @@ except ImportError:
 
     ######################################################################
     # TODO - remove GH#39
-    string_types = basestring  # noqa F821 - `nan_dot` not defined - should remove
+    string_types = basestring  # noqa F821 - `basestring` not defined - should remove
     ######################################################################
 
     class NumpyVersion:
