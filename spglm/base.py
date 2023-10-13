@@ -1,10 +1,10 @@
-from __future__ import print_function
 import numpy as np
 from scipy import stats
+
 from .utils import cache_readonly
 
 
-class Results(object):
+class Results:
     """
     Class to contain model results
     Parameters
@@ -20,7 +20,7 @@ class Results(object):
         self.initialize(model, params, **kwd)
         self._data_attr = []
 
-    def initialize(self, model, params, **kwd):
+    def initialize(self, model, params):
         self.params = params
         self.model = model
         if hasattr(model, "k_constant"):
@@ -183,7 +183,7 @@ class LikelihoodModelResults(Results):
     use_t = False
 
     def __init__(self, model, params, normalized_cov_params=None, scale=1.0, **kwargs):
-        super(LikelihoodModelResults, self).__init__(model, params)
+        super().__init__(model, params)
         self.normalized_cov_params = normalized_cov_params
         self.scale = scale
 
@@ -220,7 +220,7 @@ class LikelihoodModelResults(Results):
         raise NotImplementedError
 
     def _get_robustcov_results(
-        self, cov_type="nonrobust", use_self=True, use_t=None, **cov_kwds
+        self, cov_type="nonrobust", use_t=None, **cov_kwds
     ):
         from statsmodels.base.covtype import get_robustcov_results
 
@@ -346,16 +346,13 @@ class LikelihoodModelResults(Results):
             r_matrix = np.asarray(r_matrix)
             if r_matrix.shape == ():
                 raise ValueError("r_matrix should be 1d or 2d")
-            if other is None:
-                other = r_matrix
-            else:
-                other = np.asarray(other)
+            other = r_matrix if other is None else np.asarray(other)
             tmp = dot_fun(r_matrix, dot_fun(cov_p, np.transpose(other)))
             return tmp
         else:  # if r_matrix is None and column is None:
             return cov_p
 
-    def conf_int(self, alpha=0.05, cols=None, method="default"):
+    def conf_int(self, alpha=0.05, cols=None, method="default"):  # noqa ARG002
         """
         Returns the confidence interval of the fitted parameters.
 
