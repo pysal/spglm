@@ -219,9 +219,7 @@ class LikelihoodModelResults(Results):
     def normalized_cov_params(self):
         raise NotImplementedError
 
-    def _get_robustcov_results(
-        self, cov_type="nonrobust", use_t=None, **cov_kwds
-    ):
+    def _get_robustcov_results(self, cov_type="nonrobust", use_t=None, **cov_kwds):
         from statsmodels.base.covtype import get_robustcov_results
 
         if cov_kwds is None:

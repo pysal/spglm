@@ -454,7 +454,7 @@ class QuasiPoisson(Family):
         endog_mu = self._clean(endog / mu)
         return 2 * np.sum(endog * freq_weights * np.log(endog_mu)) / scale
 
-    def loglike(self):
+    def loglike(self, endog, mu, freq_weights=1.0, scale=1.0):  # noqa ARG002
         r"""
         The log-likelihood function in terms of the fitted mean response.
 
@@ -653,7 +653,7 @@ class Gamma(Family):
         """
         return np.clip(x, FLOAT_EPS, np.inf)
 
-    def deviance(self, endog, mu, freq_weights=1.0):
+    def deviance(self, endog, mu, freq_weights=1.0, scale=1.0):  # noqa ARG002
         r"""
         Gamma deviance function
 
@@ -665,6 +665,8 @@ class Gamma(Family):
             Fitted mean response variable
         freq_weights : array-like
             1d array of frequency weights. The default is 1.
+        scale : float, optional
+            An optional scale argument. The default is 1.
 
         Returns
         -------
@@ -675,7 +677,7 @@ class Gamma(Family):
         endog_mu = self._clean(endog / mu)
         return 2 * np.sum(freq_weights * ((endog - mu) / mu - np.log(endog_mu)))
 
-    def resid_dev(self, endog, mu):
+    def resid_dev(self, endog, mu, scale=1.0):  # noqa ARG002
         r"""
         Gamma deviance residuals
 
@@ -685,6 +687,9 @@ class Gamma(Family):
             Endogenous response variable
         mu : array-like
             Fitted mean response variable
+        scale : float, optional
+            An optional argument to divide the residuals by scale. The default
+            is 1.
 
         Returns
         -------
@@ -799,7 +804,7 @@ class Binomial(Family):
         """
         return (y + 0.5) / 2
 
-    def initialize(self, endog):
+    def initialize(self, endog, freq_weights):  # noqa ARG002
         """
         Initialize the response variable.
 
@@ -827,7 +832,7 @@ class Binomial(Family):
         else:
             return endog, np.ones(endog.shape[0])
 
-    def deviance(self, endog, mu, freq_weights=1, axis=None):
+    def deviance(self, endog, mu, freq_weights=1, scale=1.0, axis=None):  # noqa ARG002
         r"""
         Deviance function for either Bernoulli or Binomial data.
 
@@ -840,6 +845,8 @@ class Binomial(Family):
             Fitted mean response variable
         freq_weights : array-like
             1d array of frequency weights. The default is 1.
+        scale : float, optional
+            An optional scale argument. The default is 1.
 
         Returns
         --------
