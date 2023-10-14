@@ -34,7 +34,7 @@ class LikelihoodModelResults(Results):
     """
     Class to contain results from likelihood models
     Parameters
-    -----------
+    ----------
     model : LikelihoodModel instance or subclass instance
         LikelihoodModelResults holds a reference to the model that is fit.
     params : 1d array_like
@@ -374,7 +374,7 @@ class LikelihoodModelResults(Results):
                  "profile"
 
         Returns
-        --------
+        -------
         conf_int : array
                    Each row contains [lower, upper] limits of the confidence
                    interval for the corresponding parameter. The first column
