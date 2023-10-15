@@ -20,7 +20,7 @@ class Results:
         self.initialize(model, params, **kwd)
         self._data_attr = []
 
-    def initialize(self, model, params):
+    def initialize(self, model, params, **kwd):  # noqa ARG002
         self.params = params
         self.model = model
         if hasattr(model, "k_constant"):
