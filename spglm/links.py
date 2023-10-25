@@ -8,14 +8,14 @@ import scipy.stats
 FLOAT_EPS = np.finfo(float).eps
 
 
-class Link(object):
+class Link:
     """
     A generic link function for one-parameter exponential family.
 
     `Link` does nothing, but lays out the methods expected of any subclass.
     """
 
-    def __call__(self, p):
+    def __call__(self, p):  # noqa ARG002
         """
         Return the value of the link function.  This is just a placeholder.
 
@@ -31,7 +31,7 @@ class Link(object):
         """
         return NotImplementedError
 
-    def inverse(self, z):
+    def inverse(self, z):  # noqa ARG002
         """
         Inverse of the link function.  Just a placeholder.
 
@@ -50,7 +50,7 @@ class Link(object):
         """
         return NotImplementedError
 
-    def deriv(self, p):
+    def deriv(self, p):  # noqa ARG002
         """
         Derivative of the link function g'(p).  Just a placeholder.
 
@@ -230,7 +230,7 @@ class Logit(Link):
         return (2 * p - 1) / v**2
 
 
-class logit(Logit):
+class logit(Logit):  # noqa N801
     pass
 
 
@@ -357,7 +357,7 @@ class Power(Link):
         return np.power(z, (1 - self.power) / self.power) / self.power
 
 
-class inverse_power(Power):
+class inverse_power(Power):  # noqa N801
     """
     The inverse transform
 
@@ -369,10 +369,10 @@ class inverse_power(Power):
     """
 
     def __init__(self):
-        super(inverse_power, self).__init__(power=-1.0)
+        super().__init__(power=-1.0)
 
 
-class sqrt(Power):
+class sqrt(Power):  # noqa N801
     """
     The square-root transform
 
@@ -384,11 +384,11 @@ class sqrt(Power):
     """
 
     def __init__(self):
-        super(sqrt, self).__init__(power=0.5)
+        super().__init__(power=0.5)
 
 
-class inverse_squared(Power):
-    """
+class inverse_squared(Power):  # noqa N801
+    r"""
     The inverse squared transform
 
     Notes
@@ -399,10 +399,10 @@ class inverse_squared(Power):
     """
 
     def __init__(self):
-        super(inverse_squared, self).__init__(power=-2.0)
+        super().__init__(power=-2.0)
 
 
-class identity(Power):
+class identity(Power):  # noqa N801
     """
     The identity transform
 
@@ -414,7 +414,7 @@ class identity(Power):
     """
 
     def __init__(self):
-        super(identity, self).__init__(power=1.0)
+        super().__init__(power=1.0)
 
 
 class Log(Link):
@@ -430,7 +430,7 @@ class Log(Link):
     def _clean(self, x):
         return np.clip(x, FLOAT_EPS, np.inf)
 
-    def __call__(self, p, **extra):
+    def __call__(self, p):
         """
         Log transform link function
 
@@ -531,7 +531,7 @@ class Log(Link):
         return np.exp(z)
 
 
-class log(Log):
+class log(Log):  # noqa N801
     """
     The log transform
 
@@ -655,7 +655,7 @@ class CDFLink(Logit):
         return 1 / self.deriv(self.inverse(z))
 
 
-class probit(CDFLink):
+class probit(CDFLink):  # noqa N801
     """
     The probit (standard normal CDF) transform
 
@@ -669,7 +669,7 @@ class probit(CDFLink):
     pass
 
 
-class cauchy(CDFLink):
+class cauchy(CDFLink):  # noqa N801
     """
     The Cauchy (standard Cauchy CDF) transform
 
@@ -681,7 +681,7 @@ class cauchy(CDFLink):
     """
 
     def __init__(self):
-        super(cauchy, self).__init__(dbn=scipy.stats.cauchy)
+        super().__init__(dbn=scipy.stats.cauchy)
 
     def deriv2(self, p):
         """
@@ -814,7 +814,7 @@ class CLogLog(Logit):
         return np.exp(z - np.exp(z))
 
 
-class cloglog(CLogLog):
+class cloglog(CLogLog):  # noqa N801
     """
     The CLogLog transform link function.
 
@@ -829,7 +829,7 @@ class cloglog(CLogLog):
     pass
 
 
-class NegativeBinomial(object):
+class NegativeBinomial:
     """
     The negative binomial link function
 
@@ -950,7 +950,7 @@ class NegativeBinomial(object):
         return t / (self.alpha * (1 - t) ** 2)
 
 
-class nbinom(NegativeBinomial):
+class nbinom(NegativeBinomial):  # noqa N801
     """
     The negative binomial link function.
 

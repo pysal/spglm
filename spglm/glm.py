@@ -4,12 +4,13 @@ __author__ = "Taylor Oshan tayoshan@gmail.com"
 
 import numpy as np
 import numpy.linalg as la
+from spreg import user_output as user
 from spreg.utils import RegressionPropsY, spdot
-from spreg import user_output as USER
-from .utils import cache_readonly
+
+from . import family
 from .base import LikelihoodModelResults
 from .iwls import iwls
-from . import family
+from .utils import cache_readonly
 
 __all__ = ["GLM"]
 
@@ -86,11 +87,11 @@ class GLM(RegressionPropsY):
         """
         Initialize class
         """
-        self.n = USER.check_arrays(y, X)
-        USER.check_y(y, self.n)
+        self.n = user.check_arrays(y, X)
+        user.check_y(y, self.n)
         self.y = y
         if constant:
-            self.X, _, _ = USER.check_constant(X)
+            self.X, _, _ = user.check_constant(X)
         else:
             self.X = X
         self.family = family
@@ -350,7 +351,7 @@ class GLMResults(LikelihoodModelResults):
             return 1.0
         else:
             return (
-                (np.power(self.resid_response, 2) / self.family.variance(self.mu))
+                np.power(self.resid_response, 2) / self.family.variance(self.mu)
             ).sum() / (self.df_resid)
 
     @cache_readonly
@@ -381,25 +382,25 @@ class GLMResults(LikelihoodModelResults):
         return self.deviance - (self.model.n - self.df_model - 1) * np.log(self.model.n)
 
     @cache_readonly
-    def D2(self):
+    def D2(self):  # noqa N802
         return 1 - (self.deviance / self.null_deviance)
 
     @cache_readonly
-    def adj_D2(self):
+    def adj_D2(self):  # noqa N802
         return 1.0 - (float(self.n) - 1.0) / (float(self.n) - float(self.k)) * (
             1.0 - self.D2
         )
 
     @cache_readonly
-    def pseudoR2(self):
+    def pseudoR2(self):  # noqa N802
         return 1 - (self.llf / self.llnull)
 
     @cache_readonly
-    def adj_pseudoR2(self):
+    def adj_pseudoR2(self):  # noqa N802
         return 1 - ((self.llf - self.k) / self.llnull)
 
     @cache_readonly
-    def tr_S(self):
+    def tr_S(self):  # noqa N802
         xtx_inv = np.linalg.inv(np.dot(self.X.T, self.X))
         xtx_inv_xt = np.dot(xtx_inv, self.X.T)
         S = np.dot(self.X, xtx_inv_xt)

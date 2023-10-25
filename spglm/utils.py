@@ -1,6 +1,7 @@
-from __future__ import absolute_import, print_function
-import numpy as np
+import contextlib
 import warnings
+
+import numpy as np
 
 
 def _bit_length_26(x):
@@ -60,9 +61,9 @@ except ImportError:
                 raise ValueError("Not a valid numpy version string")
 
             self.version = ver_main.group()
-            self.major, self.minor, self.bugfix = [
+            self.major, self.minor, self.bugfix = (
                 int(x) for x in self.version.split(".")
-            ]
+            )
             if len(vstring) == ver_main.end():
                 self.pre_release = "final"
             else:
@@ -233,9 +234,9 @@ def _next_regular(target):
                 p2 = 2 ** _bit_length_26(quotient - 1)
 
             N = p2 * p35
-            if N == target:
+            if target == N:
                 return N
-            elif N < match:
+            elif match > N:
                 match = N
             p35 *= 3
             if p35 == target:
@@ -330,21 +331,21 @@ else:
         S = np.linalg.svd(M, compute_uv=False)
         if tol is None:
             tol = S.max() * max(M.shape) * np.finfo(S.dtype).eps
-        return np.sum(S > tol)
+        return np.sum(tol < S)
 
 
 class CacheWriteWarning(UserWarning):
     pass
 
 
-class CachedAttribute(object):
+class CachedAttribute:
     def __init__(self, func, cachename=None, resetlist=None):
         self.fget = func
         self.name = func.__name__
         self.cachename = cachename or "_cache"
         self.resetlist = resetlist or ()
 
-    def __get__(self, obj, type=None):
+    def __get__(self, obj, type_=None):
         if obj is None:
             return self.fget
         # Get the cache or set a default one if needed
@@ -369,20 +370,18 @@ class CachedAttribute(object):
             # Update the reset list if needed (and possible)
             resetlist = self.resetlist
             if resetlist != ():
-                try:
+                with contextlib.suppress(AttributeError):
                     _cache._resetdict[name] = self.resetlist
-                except AttributeError:
-                    pass
         # else:
         # print("Reading %s from cache (%s)" % (name, _cachedval))
         return _cachedval
 
     def __set__(self, obj, value):
         errmsg = "The attribute '%s' cannot be overwritten" % self.name
-        warnings.warn(errmsg, CacheWriteWarning)
+        warnings.warn(errmsg, CacheWriteWarning, stacklevel=2)
 
 
-class _cache_readonly(object):
+class _cache_readonly:  # noqa N801
     """
     Decorator for CachedAttribute
     """

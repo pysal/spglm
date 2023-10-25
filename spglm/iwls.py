@@ -1,8 +1,9 @@
 import numpy as np
-from scipy import linalg
 import numpy.linalg as la
+from scipy import linalg
 from scipy import sparse as sp
 from spreg.utils import spdot, spmultiply
+
 from .family import Binomial, Poisson
 
 
@@ -39,7 +40,15 @@ def _compute_betas_gwr(y, x, wi):
 
 
 def iwls(
-    y, x, family, offset, y_fix, ini_betas=None, tol=1.0e-8, max_iter=200, wi=None
+    y,
+    x,
+    family,
+    offset,
+    y_fix,  # noqa ARG001
+    ini_betas=None,
+    tol=1.0e-8,
+    max_iter=200,
+    wi=None,
 ):
     """
     Iteratively re-weighted least squares estimation routine
@@ -107,10 +116,7 @@ def iwls(
     n_iter = 0
     diff = 1.0e6
 
-    if ini_betas is None:
-        betas = np.zeros((x.shape[1], 1))
-    else:
-        betas = ini_betas
+    betas = np.zeros((x.shape[1], 1)) if ini_betas is None else ini_betas
 
     if isinstance(family, Binomial):
         y = family.link._clean(y)

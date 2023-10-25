@@ -6,45 +6,48 @@ function in R and GLM function in statsmodels.
 
 __author__ = "Taylor Oshan tayoshan@gmail.com"
 
-import numpy as np
+
 import libpysal
-import unittest
-import math
+import numpy
+import pytest
+
+from ..family import Binomial, Gaussian, Poisson, QuasiPoisson
 from ..glm import GLM
-from ..family import Gaussian, Poisson, Binomial, QuasiPoisson
 
 
-class TestGaussian(unittest.TestCase):
+class TestGaussian:
     """
     Tests for Poisson GLM
     """
 
-    def setUp(self):
+    def setup_method(self):
         db = libpysal.io.open(libpysal.examples.get_path("columbus.dbf"), "r")
-        y = np.array(db.by_col("HOVAL"))
-        self.y = np.reshape(y, (49, 1))
+        y = numpy.array(db.by_col("HOVAL"))
+        self.y = numpy.reshape(y, (49, 1))
         X = []
         X.append(db.by_col("INC"))
         X.append(db.by_col("CRIME"))
-        self.X = np.array(X).T
+        self.X = numpy.array(X).T
 
-    def testIWLS(self):
+    def testIWLS(self):  # noqa N802
         model = GLM(self.y, self.X, family=Gaussian())
         results = model.fit()
-        self.assertAlmostEqual(results.n, 49)
-        self.assertAlmostEqual(results.df_model, 2)
-        self.assertAlmostEqual(results.df_resid, 46)
-        self.assertAlmostEqual(results.aic, 408.73548964604873)
-        self.assertAlmostEqual(results.bic, 10467.991340493107)
-        self.assertAlmostEqual(results.deviance, 10647.015074206196)
-        self.assertAlmostEqual(results.llf, -201.36774482302437)
-        self.assertAlmostEqual(results.null_deviance, 16367.794631703124)
-        self.assertAlmostEqual(results.scale, 231.45684943926514)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.n) == 49
+        assert pytest.approx(results.df_model) == 2
+        assert pytest.approx(results.df_resid) == 46
+        assert pytest.approx(results.aic) == 408.73548964604873
+        assert pytest.approx(results.bic) == 10467.991340493107
+        assert pytest.approx(results.deviance) == 10647.015074206196
+        assert pytest.approx(results.llf) == -201.36774482302437
+        assert pytest.approx(results.null_deviance) == 16367.794631703124
+        assert pytest.approx(results.scale) == 231.45684943926514
+        numpy.testing.assert_allclose(
             results.params, [46.42818268, 0.62898397, -0.48488854]
         )
-        np.testing.assert_allclose(results.bse, [13.19175703, 0.53591045, 0.18267291])
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
+            results.bse, [13.19175703, 0.53591045, 0.18267291]
+        )
+        numpy.testing.assert_allclose(
             results.cov_params(),
             [
                 [1.74022453e02, -6.52060364e00, -2.15109867e00],
@@ -52,13 +55,13 @@ class TestGaussian(unittest.TestCase):
                 [-2.15109867e00, 6.80956787e-02, 3.33693910e-02],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.tvalues, [3.51948437, 1.17367365, -2.65440864]
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.pvalues, [0.00043239, 0.24052577, 0.00794475], atol=1.0e-8
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.conf_int(),
             [
                 [20.57281401, 72.28355135],
@@ -66,7 +69,7 @@ class TestGaussian(unittest.TestCase):
                 [-0.84292086, -0.12685622],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.normalized_cov_params,
             [
                 [7.51857004e-01, -2.81720055e-02, -9.29373521e-03],
@@ -74,7 +77,7 @@ class TestGaussian(unittest.TestCase):
                 [-9.29373521e-03, 2.94204638e-04, 1.44171110e-04],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.mu,
             [
                 51.08752105,
@@ -128,8 +131,8 @@ class TestGaussian(unittest.TestCase):
                 47.32045464,
             ],
         )
-        self.assertAlmostEqual(results.pearson_chi2, 10647.015074206196)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.pearson_chi2) == 10647.015074206196
+        numpy.testing.assert_allclose(
             results.resid_response,
             [
                 29.37948195,
@@ -183,7 +186,7 @@ class TestGaussian(unittest.TestCase):
                 -11.52045564,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_working,
             [
                 29.37948195,
@@ -237,7 +240,7 @@ class TestGaussian(unittest.TestCase):
                 -11.52045564,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_pearson,
             [
                 29.37948195,
@@ -291,7 +294,7 @@ class TestGaussian(unittest.TestCase):
                 -11.52045564,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_anscombe,
             [
                 29.37948195,
@@ -345,7 +348,7 @@ class TestGaussian(unittest.TestCase):
                 -11.52045564,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_deviance,
             [
                 29.37948195,
@@ -399,7 +402,7 @@ class TestGaussian(unittest.TestCase):
                 -11.52045564,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.null,
             [
                 38.43622447,
@@ -453,41 +456,41 @@ class TestGaussian(unittest.TestCase):
                 38.43622447,
             ],
         )
-        self.assertAlmostEqual(results.D2, 0.349514377851)
-        self.assertAlmostEqual(results.adj_D2, 0.32123239427957673)
-        self.assertAlmostEqual(results.tr_S, 3.0)
+        assert pytest.approx(results.D2) == 0.349514377851
+        assert pytest.approx(results.adj_D2) == 0.32123239427957673
+        assert pytest.approx(results.tr_S) == 3.0
 
 
-class TestPoisson(unittest.TestCase):
-    def setUp(self):
+class TestPoisson:
+    def setup_method(self):
         db = libpysal.io.open(libpysal.examples.get_path("columbus.dbf"), "r")
-        y = np.array(db.by_col("HOVAL"))
-        y = np.reshape(y, (49, 1))
-        self.y = np.round(y).astype(int)
+        y = numpy.array(db.by_col("HOVAL"))
+        y = numpy.reshape(y, (49, 1))
+        self.y = numpy.round(y).astype(int)
         X = []
         X.append(db.by_col("INC"))
         X.append(db.by_col("CRIME"))
-        self.X = np.array(X).T
+        self.X = numpy.array(X).T
 
-    def testIWLS(self):
+    def testIWLS(self):  # noqa N802
         model = GLM(self.y, self.X, family=Poisson())
         results = model.fit()
-        self.assertAlmostEqual(results.n, 49)
-        self.assertAlmostEqual(results.df_model, 2)
-        self.assertAlmostEqual(results.df_resid, 46)
-        self.assertAlmostEqual(results.aic, 500.85184179938756)
-        self.assertAlmostEqual(results.bic, 51.436404535087661)
-        self.assertAlmostEqual(results.deviance, 230.46013824817649)
-        self.assertAlmostEqual(results.llf, -247.42592089969378)
-        self.assertAlmostEqual(results.null_deviance, 376.97293610347361)
-        self.assertAlmostEqual(results.scale, 1.0)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.n) == 49
+        assert pytest.approx(results.df_model) == 2
+        assert pytest.approx(results.df_resid) == 46
+        assert pytest.approx(results.aic) == 500.85184179938756
+        assert pytest.approx(results.bic) == 51.436404535087661
+        assert pytest.approx(results.deviance) == 230.46013824817649
+        assert pytest.approx(results.llf) == -247.42592089969378
+        assert pytest.approx(results.null_deviance) == 376.97293610347361
+        assert pytest.approx(results.scale) == 1.0
+        numpy.testing.assert_allclose(
             results.params, [3.92159085, 0.01183491, -0.01371397], atol=1.0e-8
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.bse, [0.13049161, 0.00511599, 0.00193769], atol=1.0e-8
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.cov_params(),
             [
                 [1.70280610e-02, -6.18628383e-04, -2.21386966e-04],
@@ -495,13 +498,13 @@ class TestPoisson(unittest.TestCase):
                 [-2.21386966e-04, 6.77496445e-06, 3.75463502e-06],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.tvalues, [30.0524361, 2.31331634, -7.07748998]
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.pvalues, [2.02901657e-198, 2.07052532e-002, 1.46788805e-012]
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.conf_int(),
             [
                 [3.66583199e00, 4.17734972e00],
@@ -509,7 +512,7 @@ class TestPoisson(unittest.TestCase):
                 [-1.75117666e-02, -9.91616901e-03],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.normalized_cov_params,
             [
                 [1.70280610e-02, -6.18628383e-04, -2.21386966e-04],
@@ -517,7 +520,7 @@ class TestPoisson(unittest.TestCase):
                 [-2.21386966e-04, 6.77496445e-06, 3.75463502e-06],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.mu,
             [
                 51.26831574,
@@ -571,8 +574,8 @@ class TestPoisson(unittest.TestCase):
                 46.28910294,
             ],
         )
-        self.assertAlmostEqual(results.pearson_chi2, 264.62262932090221)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.pearson_chi2) == 264.62262932090221
+        numpy.testing.assert_allclose(
             results.resid_response,
             [
                 28.73168426,
@@ -626,7 +629,7 @@ class TestPoisson(unittest.TestCase):
                 -10.28910294,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_working,
             [
                 1473.02506034,
@@ -680,7 +683,7 @@ class TestPoisson(unittest.TestCase):
                 -476.27334527,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_pearson,
             [
                 4.01269878,
@@ -734,7 +737,7 @@ class TestPoisson(unittest.TestCase):
                 -1.51230062,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_anscombe,
             [
                 3.70889134,
@@ -788,7 +791,7 @@ class TestPoisson(unittest.TestCase):
                 -1.57470549,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_deviance,
             [
                 3.70529668,
@@ -842,7 +845,7 @@ class TestPoisson(unittest.TestCase):
                 -1.57426046,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.null,
             [
                 38.42857143,
@@ -896,28 +899,28 @@ class TestPoisson(unittest.TestCase):
                 38.42857143,
             ],
         )
-        self.assertAlmostEqual(results.D2, 0.388656011675)
-        self.assertAlmostEqual(results.adj_D2, 0.36207583826952761)  # .375648692774)
+        assert pytest.approx(results.D2) == 0.388656011675
+        assert pytest.approx(results.adj_D2) == 0.36207583826952761  # .375648692774
 
-    def testQuasi(self):
+    def testQuasi(self):  # noqa N802
         model = GLM(self.y, self.X, family=QuasiPoisson())
         results = model.fit()
-        self.assertAlmostEqual(results.n, 49)
-        self.assertAlmostEqual(results.df_model, 2)
-        self.assertAlmostEqual(results.df_resid, 46)
-        self.assertTrue(math.isnan(results.aic))
-        self.assertAlmostEqual(results.bic, 51.436404535087661)
-        self.assertAlmostEqual(results.deviance, 230.46013824817649)
-        self.assertTrue(math.isnan(results.llf))
-        self.assertAlmostEqual(results.null_deviance, 376.97293610347361)
-        self.assertAlmostEqual(results.scale, 5.7526658548022223)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.n) == 49
+        assert pytest.approx(results.df_model) == 2
+        assert pytest.approx(results.df_resid) == 46
+        assert numpy.isnan(results.aic)
+        assert pytest.approx(results.bic) == 51.436404535087661
+        assert pytest.approx(results.deviance) == 230.46013824817649
+        assert numpy.isnan(results.llf)
+        assert pytest.approx(results.null_deviance) == 376.97293610347361
+        assert pytest.approx(results.scale) == 5.7526658548022223
+        numpy.testing.assert_allclose(
             results.params, [3.92159085, 0.01183491, -0.01371397], atol=1.0e-8
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.bse, [0.31298042, 0.01227057, 0.00464749], atol=1.0e-8
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.cov_params(),
             [
                 [9.79567451e-02, -3.55876238e-03, -1.27356524e-03],
@@ -925,13 +928,13 @@ class TestPoisson(unittest.TestCase):
                 [-1.27356524e-03, 3.89741067e-05, 2.15991606e-05],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.tvalues, [12.52982796, 0.96449604, -2.95083339]
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.pvalues, [5.12737770e-36, 3.34797291e-01, 3.16917819e-03]
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.conf_int(),
             [
                 [3.3081605, 4.53502121],
@@ -940,7 +943,7 @@ class TestPoisson(unittest.TestCase):
             ],
             atol=1.0e-8,
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.normalized_cov_params,
             [
                 [1.70280610e-02, -6.18628383e-04, -2.21386966e-04],
@@ -948,7 +951,7 @@ class TestPoisson(unittest.TestCase):
                 [-2.21386966e-04, 6.77496445e-06, 3.75463502e-06],
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.mu,
             [
                 51.26831574,
@@ -1002,8 +1005,8 @@ class TestPoisson(unittest.TestCase):
                 46.28910294,
             ],
         )
-        self.assertAlmostEqual(results.pearson_chi2, 264.62262932090221)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.pearson_chi2) == 264.62262932090221
+        numpy.testing.assert_allclose(
             results.resid_response,
             [
                 28.73168426,
@@ -1057,7 +1060,7 @@ class TestPoisson(unittest.TestCase):
                 -10.28910294,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_working,
             [
                 1473.02506034,
@@ -1111,7 +1114,7 @@ class TestPoisson(unittest.TestCase):
                 -476.27334527,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_pearson,
             [
                 4.01269878,
@@ -1165,7 +1168,7 @@ class TestPoisson(unittest.TestCase):
                 -1.51230062,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_anscombe,
             [
                 3.70889134,
@@ -1219,7 +1222,7 @@ class TestPoisson(unittest.TestCase):
                 -1.57470549,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_deviance,
             [
                 3.70529668,
@@ -1273,7 +1276,7 @@ class TestPoisson(unittest.TestCase):
                 -1.57426046,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.null,
             [
                 38.42857143,
@@ -1327,15 +1330,15 @@ class TestPoisson(unittest.TestCase):
                 38.42857143,
             ],
         )
-        self.assertAlmostEqual(results.D2, 0.388656011675)
-        self.assertAlmostEqual(results.adj_D2, 0.36207583826952761)
+        assert pytest.approx(results.D2) == 0.388656011675
+        assert pytest.approx(results.adj_D2) == 0.36207583826952761
 
 
-class TestBinomial(unittest.TestCase):
-    def setUp(self):
+class TestBinomial:
+    def setup_method(self):
         # London house price data
         # y: 'BATH2'
-        y = np.array(
+        y = numpy.array(
             [
                 0,
                 0,
@@ -1657,7 +1660,7 @@ class TestBinomial(unittest.TestCase):
         )
         self.y = y.reshape((316, 1))
         # X: 'FLOORSZ'
-        X = np.array(
+        X = numpy.array(
             [
                 77,
                 75,
@@ -1979,36 +1982,38 @@ class TestBinomial(unittest.TestCase):
         )
         self.X = X.reshape((316, 1))
 
-    def testIWLS(self):
+    def testIWLS(self):  # noqa N802
         model = GLM(self.y, self.X, family=Binomial())
         results = model.fit()
-        self.assertAlmostEqual(results.n, 316)
-        self.assertAlmostEqual(results.df_model, 1)
-        self.assertAlmostEqual(results.df_resid, 314)
-        self.assertAlmostEqual(results.aic, 155.19347530342466)
-        self.assertAlmostEqual(results.bic, -1656.1095797628657)
-        self.assertAlmostEqual(results.deviance, 151.19347530342466)
-        self.assertAlmostEqual(results.llf, -75.596737651712331)
-        self.assertAlmostEqual(results.null_deviance, 189.16038985881212)
-        self.assertAlmostEqual(results.scale, 1.0)
-        np.testing.assert_allclose(results.params, [-5.33638276, 0.0287754])
-        np.testing.assert_allclose(results.bse, [0.64499904, 0.00518312], atol=1.0e-8)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.n) == 316
+        assert pytest.approx(results.df_model) == 1
+        assert pytest.approx(results.df_resid) == 314
+        assert pytest.approx(results.aic) == 155.19347530342466
+        assert pytest.approx(results.bic) == -1656.1095797628657
+        assert pytest.approx(results.deviance) == 151.19347530342466
+        assert pytest.approx(results.llf) == -75.596737651712331
+        assert pytest.approx(results.null_deviance) == 189.16038985881212
+        assert pytest.approx(results.scale) == 1.0
+        numpy.testing.assert_allclose(results.params, [-5.33638276, 0.0287754])
+        numpy.testing.assert_allclose(
+            results.bse, [0.64499904, 0.00518312], atol=1.0e-8
+        )
+        numpy.testing.assert_allclose(
             results.cov_params(),
             [[4.16023762e-01, -3.14338457e-03], [-3.14338457e-03, 2.68646833e-05]],
         )
-        np.testing.assert_allclose(results.tvalues, [-8.27347396, 5.55175826])
-        np.testing.assert_allclose(results.pvalues, [1.30111233e-16, 2.82810512e-08])
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(results.tvalues, [-8.27347396, 5.55175826])
+        numpy.testing.assert_allclose(results.pvalues, [1.30111233e-16, 2.82810512e-08])
+        numpy.testing.assert_allclose(
             results.conf_int(),
             [[-6.60055765, -4.07220787], [0.01861668, 0.03893412]],
             atol=1.0e-8,
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.normalized_cov_params,
             [[4.16023762e-01, -3.14338457e-03], [-3.14338457e-03, 2.68646833e-05]],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.mu,
             [
                 0.04226237,
@@ -2330,8 +2335,8 @@ class TestBinomial(unittest.TestCase):
             ],
             atol=1.0e-8,
         )
-        self.assertAlmostEqual(results.pearson_chi2, 271.21110541713801)
-        np.testing.assert_allclose(
+        assert pytest.approx(results.pearson_chi2) == 271.21110541713801
+        numpy.testing.assert_allclose(
             results.resid_response,
             [
                 -0.04226237,
@@ -2653,7 +2658,7 @@ class TestBinomial(unittest.TestCase):
             ],
             atol=1.0e-8,
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_working,
             [
                 -1.71062283e-03,
@@ -2974,7 +2979,7 @@ class TestBinomial(unittest.TestCase):
                 -1.18023417e-01,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_pearson,
             [
                 -0.21006498,
@@ -3295,7 +3300,7 @@ class TestBinomial(unittest.TestCase):
                 -2.19209332,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_anscombe,
             [
                 -0.31237627,
@@ -3616,7 +3621,7 @@ class TestBinomial(unittest.TestCase):
                 -2.18250381,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.resid_deviance,
             [
                 -0.29387552,
@@ -3937,7 +3942,7 @@ class TestBinomial(unittest.TestCase):
                 -1.87550882,
             ],
         )
-        np.testing.assert_allclose(
+        numpy.testing.assert_allclose(
             results.null,
             [
                 0.08860759,
@@ -4258,9 +4263,5 @@ class TestBinomial(unittest.TestCase):
                 0.08860759,
             ],
         )
-        self.assertAlmostEqual(results.D2, 0.200712816165)
-        self.assertAlmostEqual(results.adj_D2, 0.19816731557930456)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert pytest.approx(results.D2) == 0.200712816165
+        assert pytest.approx(results.adj_D2) == 0.19816731557930456
