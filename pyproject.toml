@@ -38,7 +38,6 @@ Repository = "https://github.com/pysal/spglm"
 
 [project.optional-dependencies]
 dev = [
-    "black",
     "ruff",
     "pre-commit",
 ]
@@ -63,19 +62,10 @@ include = [
     "spglm.*",
 ]
 
-[tool.black]
-line-length = 88
-extend-exclude = '''
-(
-  docs/conf.py
-)
-#'''
-
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-target-version = "py39"
-ignore = [
+lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
+lint.ignore = [
     "B006",
     "B008",
     "B009",
@@ -103,4 +93,4 @@ exclude_lines = [
     "except ImportError",
 ]
 ignore_errors = true
-omit = ["spglm/tests/*", "spglm/conf.py"]
+omit = ["spglm/tests/*", "spglm/docs/conf.py"]
