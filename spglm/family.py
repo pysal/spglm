@@ -9,8 +9,8 @@ The one parameter exponential family distributions used by GLM.
 import numpy as np
 from scipy import special
 
-from . import links as L  # noqa N812
-from . import varfuncs as V  # noqa N812
+from . import links as L  # noqa: N812 - Lowercase imported as non-lowercase
+from . import varfuncs as V  # noqa: N812
 
 FLOAT_EPS = np.finfo(float).eps
 
@@ -455,7 +455,7 @@ class QuasiPoisson(Family):
         endog_mu = self._clean(endog / mu)
         return 2 * np.sum(endog * freq_weights * np.log(endog_mu)) / scale
 
-    def loglike(self, endog, mu, freq_weights=1.0, scale=1.0):  # noqa ARG002
+    def loglike(self, endog, mu, freq_weights=1.0, scale=1.0):
         r"""
         The log-likelihood function in terms of the fitted mean response.
 
@@ -654,7 +654,7 @@ class Gamma(Family):
         """
         return np.clip(x, FLOAT_EPS, np.inf)
 
-    def deviance(self, endog, mu, freq_weights=1.0, scale=1.0):  # noqa ARG002
+    def deviance(self, endog, mu, freq_weights=1.0, scale=1.0):
         r"""
         Gamma deviance function
 
@@ -678,7 +678,7 @@ class Gamma(Family):
         endog_mu = self._clean(endog / mu)
         return 2 * np.sum(freq_weights * ((endog - mu) / mu - np.log(endog_mu)))
 
-    def resid_dev(self, endog, mu, scale=1.0):  # noqa ARG002
+    def resid_dev(self, endog, mu, scale=1.0):
         r"""
         Gamma deviance residuals
 
@@ -805,7 +805,7 @@ class Binomial(Family):
         """
         return (y + 0.5) / 2
 
-    def initialize(self, endog, freq_weights):  # noqa ARG002
+    def initialize(self, endog, freq_weights):
         """
         Initialize the response variable.
 
@@ -833,7 +833,7 @@ class Binomial(Family):
         else:
             return endog, np.ones(endog.shape[0])
 
-    def deviance(self, endog, mu, freq_weights=1, scale=1.0, axis=None):  # noqa ARG002
+    def deviance(self, endog, mu, freq_weights=1, scale=1.0, axis=None):
         r"""
         Deviance function for either Bernoulli or Binomial data.
 
@@ -982,7 +982,7 @@ class Binomial(Family):
             Journal of the Royal Statistical Society B. 30, 248-75.
 
         """
-        cox_snell = lambda x: (  # noqa E731 - skip "don't use lambda"
+        cox_snell = lambda x: (  # noqa: E731 - skip "don't use lambda"
             special.betainc(2 / 3.0, 2 / 3.0, x) * special.beta(2 / 3.0, 2 / 3.0)
         )
         return np.sqrt(self.n) * (

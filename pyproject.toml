@@ -66,20 +66,18 @@ include = [
 line-length = 88
 lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
 lint.ignore = [
-    "B006",
-    "B008",
-    "B009",
-    "B010",
-    "C408",
-    "E731",
+    "ARG002", # Unused method argument
+    "B008",   # Do not perform function call in argument defaults
+    "N801",   # Class name should use CapWords convention
+    "N802",   # Function name should be lowercase
+    "N806",   # Variable in function should be lowercase
+]
+
+[tool.ruff.lint.per-file-ignores]
+"*__init__.py" = [
     "F401",
     "F403",
-    "N803",
-    "N806",
-    "N999",
-    "UP007"
 ]
-exclude = ["spglm/tests/*", "docs/*"]
 
 [tool.coverage.run]
 source = ["./spglm"]

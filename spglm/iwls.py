@@ -44,7 +44,7 @@ def iwls(
     x,
     family,
     offset,
-    y_fix,  # noqa ARG001
+    y_fix,  # noqa: ARG001 - Unused function argument
     ini_betas=None,
     tol=1.0e-8,
     max_iter=200,

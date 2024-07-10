@@ -82,7 +82,13 @@ class GLM(RegressionPropsY):
     """
 
     def __init__(
-        self, y, X, family=family.Gaussian(), offset=None, y_fix=None, constant=True
+        self,
+        y,
+        X,  # noqa: N803 - Argument name should be lowercase
+        family=family.Gaussian(),
+        offset=None,
+        y_fix=None,
+        constant=True,
     ):
         """
         Initialize class
@@ -340,7 +346,7 @@ class GLMResults(LikelihoodModelResults):
     @cache_readonly
     def null(self):
         y = np.reshape(self.y, (-1, 1))
-        model = self.model  # noqa F841 - `model` never used
+        model = self.model  # noqa: F841 - `model` never used
         X = np.ones((len(y), 1))
         null_mod = GLM(y, X, family=self.family, offset=self.offset, constant=False)
         return null_mod.fit().mu
@@ -382,25 +388,25 @@ class GLMResults(LikelihoodModelResults):
         return self.deviance - (self.model.n - self.df_model - 1) * np.log(self.model.n)
 
     @cache_readonly
-    def D2(self):  # noqa N802
+    def D2(self):
         return 1 - (self.deviance / self.null_deviance)
 
     @cache_readonly
-    def adj_D2(self):  # noqa N802
+    def adj_D2(self):
         return 1.0 - (float(self.n) - 1.0) / (float(self.n) - float(self.k)) * (
             1.0 - self.D2
         )
 
     @cache_readonly
-    def pseudoR2(self):  # noqa N802
+    def pseudoR2(self):
         return 1 - (self.llf / self.llnull)
 
     @cache_readonly
-    def adj_pseudoR2(self):  # noqa N802
+    def adj_pseudoR2(self):
         return 1 - ((self.llf - self.k) / self.llnull)
 
     @cache_readonly
-    def tr_S(self):  # noqa N802
+    def tr_S(self):
         xtx_inv = np.linalg.inv(np.dot(self.X.T, self.X))
         xtx_inv_xt = np.dot(xtx_inv, self.X.T)
         S = np.dot(self.X, xtx_inv_xt)
