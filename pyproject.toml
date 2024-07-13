@@ -38,7 +38,6 @@ Repository = "https://github.com/pysal/spglm"
 
 [project.optional-dependencies]
 dev = [
-    "black",
     "ruff",
     "pre-commit",
 ]
@@ -63,33 +62,22 @@ include = [
     "spglm.*",
 ]
 
-[tool.black]
-line-length = 88
-extend-exclude = '''
-(
-  docs/conf.py
-)
-#'''
-
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
-target-version = "py39"
-ignore = [
-    "B006",
-    "B008",
-    "B009",
-    "B010",
-    "C408",
-    "E731",
+lint.select = ["E", "F", "W", "I", "UP", "N", "B", "A", "C4", "SIM", "ARG"]
+lint.ignore = [
+    "ARG002", # Unused method argument
+    "B008",   # Do not perform function call in argument defaults
+    "N801",   # Class name should use CapWords convention
+    "N802",   # Function name should be lowercase
+    "N806",   # Variable in function should be lowercase
+]
+
+[tool.ruff.lint.per-file-ignores]
+"*__init__.py" = [
     "F401",
     "F403",
-    "N803",
-    "N806",
-    "N999",
-    "UP007"
 ]
-exclude = ["spglm/tests/*", "docs/*"]
 
 [tool.coverage.run]
 source = ["./spglm"]
@@ -103,4 +91,4 @@ exclude_lines = [
     "except ImportError",
 ]
 ignore_errors = true
-omit = ["spglm/tests/*", "spglm/conf.py"]
+omit = ["spglm/tests/*", "spglm/docs/conf.py"]

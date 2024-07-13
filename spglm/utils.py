@@ -20,7 +20,7 @@ except ImportError:
 
     ######################################################################
     # TODO - remove GH#39
-    string_types = basestring  # noqa F821 - `basestring` not defined - should remove
+    string_types = basestring  # noqa: F821 - `basestring` not defined - should remove
     ######################################################################
 
     class NumpyVersion:
@@ -155,7 +155,7 @@ except ImportError:
             return self._compare(other) >= 0
 
         def __repr(self):
-            return "NumpyVersion(%s)" % self.vstring
+            return f"NumpyVersion({self.vstring})"
 
 
 class ResettableCache(dict):
@@ -255,7 +255,7 @@ if NumpyVersion(np.__version__) >= "1.7.1":
     np_matrix_rank = np.linalg.matrix_rank
 else:
 
-    def np_matrix_rank(M, tol=None):
+    def np_matrix_rank(M, tol=None):  # noqa: N803 - Argument name should be lowercase
         """
         Return matrix rank of array using SVD method
         Rank of the array is the number of SVD singular values of the array that are
@@ -377,11 +377,11 @@ class CachedAttribute:
         return _cachedval
 
     def __set__(self, obj, value):
-        errmsg = "The attribute '%s' cannot be overwritten" % self.name
+        errmsg = f"The attribute '{self.name}' cannot be overwritten"
         warnings.warn(errmsg, CacheWriteWarning, stacklevel=2)
 
 
-class _cache_readonly:  # noqa N801
+class _cache_readonly:
     """
     Decorator for CachedAttribute
     """

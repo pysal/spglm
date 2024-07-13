@@ -117,7 +117,7 @@ class Power:
 
         ########################################################################
         # `approx_fprime_cs` is imported by unused
-        from statsmodels.tools.numdiff import approx_fprime_cs  # noqa F401
+        from statsmodels.tools.numdiff import approx_fprime_cs  # noqa: F401, I001
 
         # return approx_fprime_cs(mu, self)  # TODO fix breaks in `fabs
         ########################################################################

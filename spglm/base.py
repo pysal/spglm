@@ -20,7 +20,7 @@ class Results:
         self.initialize(model, params, **kwd)
         self._data_attr = []
 
-    def initialize(self, model, params, **kwd):  # noqa ARG002
+    def initialize(self, model, params, **kwd):
         self.params = params
         self.model = model
         if hasattr(model, "k_constant"):
@@ -306,7 +306,7 @@ class LikelihoodModelResults(Results):
         ]:
             ######################################################################
             # TODO - remove GH#38
-            dot_fun = nan_dot  # noqa F821 - `nan_dot` not defined - should remove
+            dot_fun = nan_dot  # noqa: F821 - `nan_dot` not defined - should remove
             ######################################################################
         else:
             dot_fun = np.dot
@@ -350,7 +350,7 @@ class LikelihoodModelResults(Results):
         else:  # if r_matrix is None and column is None:
             return cov_p
 
-    def conf_int(self, alpha=0.05, cols=None, method="default"):  # noqa ARG002
+    def conf_int(self, alpha=0.05, cols=None, method="default"):
         """
         Returns the confidence interval of the fitted parameters.
 

@@ -2,10 +2,10 @@ import contextlib
 from importlib.metadata import PackageNotFoundError, version
 
 from . import (
-    family,  # noqa F401
-    glm,  # noqa F401
-    iwls,  # noqa F401
-    utils,  # noqa F401
+    family,
+    glm,
+    iwls,
+    utils,
 )
 
 with contextlib.suppress(PackageNotFoundError):

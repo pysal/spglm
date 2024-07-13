@@ -15,7 +15,7 @@ class Link:
     `Link` does nothing, but lays out the methods expected of any subclass.
     """
 
-    def __call__(self, p):  # noqa ARG002
+    def __call__(self, p):
         """
         Return the value of the link function.  This is just a placeholder.
 
@@ -31,7 +31,7 @@ class Link:
         """
         return NotImplementedError
 
-    def inverse(self, z):  # noqa ARG002
+    def inverse(self, z):
         """
         Inverse of the link function.  Just a placeholder.
 
@@ -50,7 +50,7 @@ class Link:
         """
         return NotImplementedError
 
-    def deriv(self, p):  # noqa ARG002
+    def deriv(self, p):
         """
         Derivative of the link function g'(p).  Just a placeholder.
 
@@ -230,7 +230,7 @@ class Logit(Link):
         return (2 * p - 1) / v**2
 
 
-class logit(Logit):  # noqa N801
+class logit(Logit):
     pass
 
 
@@ -357,7 +357,7 @@ class Power(Link):
         return np.power(z, (1 - self.power) / self.power) / self.power
 
 
-class inverse_power(Power):  # noqa N801
+class inverse_power(Power):
     """
     The inverse transform
 
@@ -372,7 +372,7 @@ class inverse_power(Power):  # noqa N801
         super().__init__(power=-1.0)
 
 
-class sqrt(Power):  # noqa N801
+class sqrt(Power):
     """
     The square-root transform
 
@@ -387,7 +387,7 @@ class sqrt(Power):  # noqa N801
         super().__init__(power=0.5)
 
 
-class inverse_squared(Power):  # noqa N801
+class inverse_squared(Power):
     r"""
     The inverse squared transform
 
@@ -402,7 +402,7 @@ class inverse_squared(Power):  # noqa N801
         super().__init__(power=-2.0)
 
 
-class identity(Power):  # noqa N801
+class identity(Power):
     """
     The identity transform
 
@@ -531,7 +531,7 @@ class Log(Link):
         return np.exp(z)
 
 
-class log(Log):  # noqa N801
+class log(Log):
     """
     The log transform
 
@@ -655,7 +655,7 @@ class CDFLink(Logit):
         return 1 / self.deriv(self.inverse(z))
 
 
-class probit(CDFLink):  # noqa N801
+class probit(CDFLink):
     """
     The probit (standard normal CDF) transform
 
@@ -669,7 +669,7 @@ class probit(CDFLink):  # noqa N801
     pass
 
 
-class cauchy(CDFLink):  # noqa N801
+class cauchy(CDFLink):
     """
     The Cauchy (standard Cauchy CDF) transform
 
@@ -814,7 +814,7 @@ class CLogLog(Logit):
         return np.exp(z - np.exp(z))
 
 
-class cloglog(CLogLog):  # noqa N801
+class cloglog(CLogLog):
     """
     The CLogLog transform link function.
 
@@ -950,7 +950,7 @@ class NegativeBinomial:
         return t / (self.alpha * (1 - t) ** 2)
 
 
-class nbinom(NegativeBinomial):  # noqa N801
+class nbinom(NegativeBinomial):
     """
     The negative binomial link function.
 
