@@ -2,14 +2,12 @@ name: test
 channels:
   - conda-forge
 dependencies:
-  - python=3.9
+  - python=3.10
   # required
-  - git
-  - libpysal=4.5
-  - numpy=1.23
-  - pip
-  - scipy=1.8
-  - spreg=1.2
+  - libpysal
+  - numpy
+  - scipy
+  - spreg
   # testing
   - codecov
   - pytest
