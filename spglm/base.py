@@ -317,11 +317,10 @@ class LikelihoodModelResults(Results):
             and not hasattr(self, "cov_params_default")
         ):
             raise ValueError(
-                "need covariance of parameters for computing "
-                "(unnormalized) covariances"
+                "need covariance of parameters for computing (unnormalized) covariances"
             )
         if column is not None and (r_matrix is not None or other is not None):
-            raise ValueError("Column should be specified without other " "arguments.")
+            raise ValueError("Column should be specified without other arguments.")
         if other is not None and r_matrix is None:
             raise ValueError("other can only be specified with r_matrix")
 
