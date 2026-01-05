@@ -47,12 +47,12 @@ jobs:
 
     steps:
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
            fetch-depth: 0 # Fetch all history for all branches and tags.
        
       - name: setup micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-file: ${{ matrix.environment-file }}
           micromamba-version: 'latest'
@@ -66,7 +66,7 @@ jobs:
         run: ${{ env.RUN_TEST }}
       
       - name: codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
