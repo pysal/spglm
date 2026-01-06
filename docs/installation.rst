@@ -4,7 +4,7 @@ Installation
 ============
 
 
-``spglm`` supports python `3.9`_, `3.10`_, and `3.11`_. Please make sure that you are
+``spglm`` supports python >= `3.11`_. Please make sure that you are
 operating in a python 3 environment.
 
 
@@ -52,8 +52,6 @@ your fork. By making changes
 to your local clone and submitting a pull request to `pysal/spglm`_, you can
 contribute to the mgwr development.
 
-.. _3.9: https://docs.python.org/3.9/
-.. _3.10: https://docs.python.org/3.10/
 .. _3.11: https://docs.python.org/3.11/
 .. _a nice example: https://geopandas.readthedocs.io/en/latest/getting_started/install.html#creating-a-new-environment
 .. _conda: https://docs.conda.io/en/latest/
