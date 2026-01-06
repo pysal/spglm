@@ -2,11 +2,10 @@ name: Continuous Integration
  
 on:
   push:
-    branches:
-      - '*'
+    branches: [main]
   pull_request:
     branches:
-      - '*'
+      - "*"
   schedule:
       - cron: '59 23 * * *'
   workflow_dispatch:
@@ -38,21 +37,21 @@ jobs:
           - ci/312-dev.yaml
         include:
           - environment-file: ci/312-latest.yaml
-            os: macos-13 # Intel
+            os: macos-15-intel # Intel
           - environment-file: ci/312-latest.yaml
-            os: macos-14 # Apple Silicon
+            os: macos-latest # Apple Silicon
           - environment-file: ci/312-latest.yaml
             os: windows-latest
       fail-fast: false
 
     steps:
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
            fetch-depth: 0 # Fetch all history for all branches and tags.
        
       - name: setup micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-file: ${{ matrix.environment-file }}
           micromamba-version: 'latest'
@@ -66,7 +65,7 @@ jobs:
         run: ${{ env.RUN_TEST }}
       
       - name: codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
