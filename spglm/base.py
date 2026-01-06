@@ -425,4 +425,4 @@ class LikelihoodModelResults(Results):
 
 
 def lzip(*args, **kwargs):
-    return list(zip(*args, **kwargs))
+    return list(zip(*args, **kwargs))  # noqa: B905 `zip()` without an explicit `strict=` parameter
