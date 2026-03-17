@@ -253,7 +253,7 @@ def setup(app):
 intersphinx_mapping = {
     "libpysal": ("https://pysal.org/libpysal/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
-    "python": ("https://docs.python.org/3.11/", None),
+    "python": ("https://docs.python.org/3/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "spreg": ("https://pysal.org/spreg/", None),
 }
