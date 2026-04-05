@@ -1,5 +1,6 @@
+---
 name: Continuous Integration
- 
+
 on:
   push:
     branches: [main]
@@ -29,8 +30,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         environment-file:
-          - ci/311-oldest.yaml
-          - ci/311-latest.yaml
+          - ci/312-oldest.yaml
           - ci/312-latest.yaml
           - ci/314-latest.yaml
           - ci/314-latest.yaml
@@ -51,7 +51,7 @@ jobs:
            fetch-depth: 0 # Fetch all history for all branches and tags.
        
       - name: setup micromamba
-        uses: mamba-org/setup-micromamba@v2
+        uses: mamba-org/setup-micromamba@v3
         with:
           environment-file: ${{ matrix.environment-file }}
           micromamba-version: 'latest'
@@ -65,8 +65,6 @@ jobs:
         run: ${{ env.RUN_TEST }}
       
       - name: codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          name: spglm-codecov
