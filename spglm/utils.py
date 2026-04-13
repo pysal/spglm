@@ -1,10 +1,6 @@
 import contextlib
 import warnings
 
-import numpy as np
-
-np_matrix_rank = np.linalg.matrix_rank
-
 
 def _bit_length_26(x):
     if x == 0:
