@@ -37,8 +37,6 @@ jobs:
           - ci/314-dev.yaml
         include:
           - environment-file: ci/314-latest.yaml
-            os: macos-15-intel # Intel
-          - environment-file: ci/314-latest.yaml
             os: macos-latest # Apple Silicon
           - environment-file: ci/314-latest.yaml
             os: windows-latest
@@ -46,7 +44,7 @@ jobs:
 
     steps:
       - name: checkout repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
            fetch-depth: 0 # Fetch all history for all branches and tags.
        
@@ -65,6 +63,6 @@ jobs:
         run: ${{ env.RUN_TEST }}
       
       - name: codecov
-        uses: codecov/codecov-action@v6
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
